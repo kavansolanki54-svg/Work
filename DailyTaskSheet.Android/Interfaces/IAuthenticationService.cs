@@ -41,6 +41,9 @@ namespace DailyTaskSheet.App.Interfaces
         /// <summary>Gets the currently stored company ID.</summary>
         int GetCompanyId();
 
+        /// <summary>Gets the currently stored company name.</summary>
+        string GetCompanyName();
+
         /// <summary>Gets the currently stored user name.</summary>
         string GetUserName();
     }

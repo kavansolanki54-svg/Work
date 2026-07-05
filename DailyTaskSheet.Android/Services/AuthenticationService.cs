@@ -167,6 +167,9 @@ namespace DailyTaskSheet.App.Services
         public int GetCompanyId() => _preferenceService.GetInt(AppConstants.PrefKeyCompanyId);
 
         /// <inheritdoc />
+        public string GetCompanyName() => _preferenceService.GetString(AppConstants.PrefKeyCompanyName, string.Empty);
+
+        /// <inheritdoc />
         public string GetUserName() => _preferenceService.GetString(AppConstants.PrefKeyUserName, "User");
 
         /// <summary>
@@ -183,6 +186,7 @@ namespace DailyTaskSheet.App.Services
             {
                 _preferenceService.SetInt(AppConstants.PrefKeyEmployeeId, loginResponse.User.EmployeeId);
                 _preferenceService.SetInt(AppConstants.PrefKeyCompanyId, loginResponse.User.CompanyId);
+                _preferenceService.SetString(AppConstants.PrefKeyCompanyName, loginResponse.User.CompanyName);
                 _preferenceService.SetInt(AppConstants.PrefKeyRoleId, loginResponse.User.RoleId);
                 _preferenceService.SetString(AppConstants.PrefKeyUserName, loginResponse.User.UserName);
                 _preferenceService.SetString(AppConstants.PrefKeyEmail, loginResponse.User.Email);
@@ -195,6 +199,7 @@ namespace DailyTaskSheet.App.Services
                     Email = loginResponse.User.Email,
                     UserName = loginResponse.User.UserName,
                     CompanyId = loginResponse.User.CompanyId,
+                    CompanyName = loginResponse.User.CompanyName,
                     RoleId = loginResponse.User.RoleId,
                     RoleName = loginResponse.User.RoleName,
                     RoleType = loginResponse.User.RoleType,

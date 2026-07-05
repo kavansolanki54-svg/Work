@@ -21,6 +21,10 @@ namespace DailyTaskSheet.App.Activities
         private SwitchMaterial _bgSyncSwitch = null!;
         private SwitchMaterial _wifiOnlySwitch = null!;
         private Button _logoutButton = null!;
+        private Button _selectFolderButton = null!;
+        private TextView _selectedFolderText = null!;
+        
+        private const int RequestCodeOpenDocumentTree = 42;
 
         protected override void OnCreate(Bundle? savedInstanceState)
         {
@@ -51,12 +55,21 @@ namespace DailyTaskSheet.App.Activities
             _bgSyncSwitch = FindViewById<SwitchMaterial>(Resource.Id.bgSyncSwitch)!;
             _wifiOnlySwitch = FindViewById<SwitchMaterial>(Resource.Id.wifiOnlySwitch)!;
             _logoutButton = FindViewById<Button>(Resource.Id.logoutButton)!;
+            _selectFolderButton = FindViewById<Button>(Resource.Id.selectFolderButton)!;
+            _selectedFolderText = FindViewById<TextView>(Resource.Id.selectedFolderText)!;
         }
 
         private void BindEvents()
         {
             _bgSyncSwitch.CheckedChange += (s, e) => _viewModel.BackgroundSyncEnabled = e.IsChecked;
             _wifiOnlySwitch.CheckedChange += (s, e) => _viewModel.WifiOnly = e.IsChecked;
+
+            _selectFolderButton.Click += (s, e) =>
+            {
+                var intent = new Intent(Intent.ActionOpenDocumentTree);
+                intent.AddFlags(ActivityFlags.GrantReadUriPermission | ActivityFlags.GrantPersistableUriPermission);
+                StartActivityForResult(intent, RequestCodeOpenDocumentTree);
+            };
 
             _logoutButton.Click += async (s, e) =>
             {
@@ -74,6 +87,29 @@ namespace DailyTaskSheet.App.Activities
             _viewModel.LogoutRequested += ViewModel_LogoutRequested;
         }
 
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent? data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+
+            if (requestCode == RequestCodeOpenDocumentTree && resultCode == Result.Ok && data != null)
+            {
+                var uri = data.Data;
+                if (uri != null)
+                {
+                    try
+                    {
+                        var takeFlags = data.Flags & (ActivityFlags.GrantReadUriPermission | ActivityFlags.GrantWriteUriPermission);
+                        ContentResolver?.TakePersistableUriPermission(uri, takeFlags);
+                        _viewModel.CustomRecordingPath = uri.ToString();
+                    }
+                    catch (Exception ex)
+                    {
+                        Android.Util.Log.Error("SettingsActivity", $"Failed to take persistable URI permission: {ex.Message}");
+                    }
+                }
+            }
+        }
+
         private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             RunOnUiThread(() =>
@@ -82,6 +118,13 @@ namespace DailyTaskSheet.App.Activities
                     _bgSyncSwitch.Checked = _viewModel.BackgroundSyncEnabled;
                 else if (e.PropertyName == nameof(_viewModel.WifiOnly))
                     _wifiOnlySwitch.Checked = _viewModel.WifiOnly;
+                else if (e.PropertyName == nameof(_viewModel.CustomRecordingPath))
+                {
+                    if (string.IsNullOrEmpty(_viewModel.CustomRecordingPath))
+                        _selectedFolderText.Text = "No custom folder selected";
+                    else
+                        _selectedFolderText.Text = Android.Net.Uri.Decode(_viewModel.CustomRecordingPath) ?? _viewModel.CustomRecordingPath;
+                }
             });
         }
 

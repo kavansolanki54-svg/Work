@@ -53,6 +53,7 @@ namespace DailyTaskSheet.App.Constants
         public const string PrefKeyTokenExpiry = "pref_token_expiry";
         public const string PrefKeyEmployeeId = "pref_employee_id";
         public const string PrefKeyCompanyId = "pref_company_id";
+        public const string PrefKeyCompanyName = "pref_company_name";
         public const string PrefKeyUserId = "pref_user_id";
         public const string PrefKeyUserName = "pref_user_name";
         public const string PrefKeyEmail = "pref_email";
@@ -62,6 +63,7 @@ namespace DailyTaskSheet.App.Constants
         public const string PrefKeyIsLoggedIn = "pref_is_logged_in";
         public const string PrefKeyLastSyncTime = "pref_last_sync_time";
         public const string PrefKeyLastSyncCallId = "pref_last_sync_call_id";
+        public const string PrefKeyCustomRecordingPath = "pref_custom_recording_path";
         public const string PrefKeyApiBaseUrl = "pref_api_base_url";
         public const string PrefKeySyncInterval = "pref_sync_interval";
         public const string PrefKeyBackgroundSyncEnabled = "pref_background_sync_enabled";

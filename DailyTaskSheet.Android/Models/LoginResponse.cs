@@ -55,6 +55,10 @@ namespace DailyTaskSheet.App.Models
         [JsonProperty("companyId")]
         public int CompanyId { get; set; }
 
+        /// <summary>Gets or sets the user's company name.</summary>
+        [JsonProperty("companyName")]
+        public string CompanyName { get; set; } = string.Empty;
+
         /// <summary>Gets or sets whether this user is a tenant administrator.</summary>
         [JsonProperty("isTenant")]
         public bool IsTenant { get; set; }

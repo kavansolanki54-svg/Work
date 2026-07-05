@@ -90,7 +90,8 @@ namespace DailyTaskSheet.App.ViewModels
                 // User info
                 EmployeeName = _authService.GetUserName();
                 EmployeeId = _authService.GetEmployeeId();
-                CompanyName = $"Company #{_authService.GetCompanyId()}";
+                var cName = _authService.GetCompanyName();
+                CompanyName = string.IsNullOrEmpty(cName) ? $"Company #{_authService.GetCompanyId()}" : cName;
 
                 // Device info
                 DeviceName = _deviceService.GetDeviceName();

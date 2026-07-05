@@ -25,9 +25,11 @@ namespace DailyTaskSheet.App.ViewModels
         private bool _loggingEnabled;
         private bool _autoRetry;
         private bool _darkMode;
+        private string _customRecordingPath = string.Empty;
 
         // Properties
         public string ApiBaseUrl { get => _apiBaseUrl; set { SetProperty(ref _apiBaseUrl, value); SaveSetting(AppConstants.PrefKeyApiBaseUrl, value); } }
+        public string CustomRecordingPath { get => _customRecordingPath; set { SetProperty(ref _customRecordingPath, value); SaveSetting(AppConstants.PrefKeyCustomRecordingPath, value); } }
         public int SyncInterval { get => _syncInterval; set { SetProperty(ref _syncInterval, value); SaveSetting(AppConstants.PrefKeySyncInterval, value); } }
         public bool BackgroundSyncEnabled { get => _backgroundSyncEnabled; set { SetProperty(ref _backgroundSyncEnabled, value); SaveSetting(AppConstants.PrefKeyBackgroundSyncEnabled, value); } }
         public bool WifiOnly { get => _wifiOnly; set { SetProperty(ref _wifiOnly, value); SaveSetting(AppConstants.PrefKeyWifiOnly, value); } }
@@ -57,6 +59,7 @@ namespace DailyTaskSheet.App.ViewModels
         public void LoadSettings()
         {
             _apiBaseUrl = _preferenceService.GetString(AppConstants.PrefKeyApiBaseUrl, AppConstants.DefaultApiBaseUrl);
+            _customRecordingPath = _preferenceService.GetString(AppConstants.PrefKeyCustomRecordingPath, string.Empty);
             _syncInterval = _preferenceService.GetInt(AppConstants.PrefKeySyncInterval, AppConstants.DefaultSyncIntervalMinutes);
             _backgroundSyncEnabled = _preferenceService.GetBool(AppConstants.PrefKeyBackgroundSyncEnabled, true);
             _wifiOnly = _preferenceService.GetBool(AppConstants.PrefKeyWifiOnly, false);
@@ -68,6 +71,7 @@ namespace DailyTaskSheet.App.ViewModels
 
             // Raise all property changed
             OnPropertyChanged(nameof(ApiBaseUrl));
+            OnPropertyChanged(nameof(CustomRecordingPath));
             OnPropertyChanged(nameof(SyncInterval));
             OnPropertyChanged(nameof(BackgroundSyncEnabled));
             OnPropertyChanged(nameof(WifiOnly));

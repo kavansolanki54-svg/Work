@@ -27,7 +27,11 @@ namespace DailyTaskSheet.App.Models
         public string UserName { get; set; } = string.Empty;
 
         /// <summary>Company ID the user belongs to.</summary>
+        [Column("CompanyId")]
         public int CompanyId { get; set; }
+
+        [Column("CompanyName")]
+        public string CompanyName { get; set; } = string.Empty;
 
         /// <summary>Role ID assigned to the user.</summary>
         public int RoleId { get; set; }

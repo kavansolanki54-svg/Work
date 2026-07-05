@@ -81,10 +81,15 @@ namespace DailyTaskSheet.App.Services
                 permissions.Add(Manifest.Permission.ReadPhoneNumbers);
             }
 
-            // POST_NOTIFICATIONS requires API 33+
+            // POST_NOTIFICATIONS and READ_MEDIA_AUDIO require API 33+
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
             {
                 permissions.Add(Manifest.Permission.PostNotifications);
+                permissions.Add(Manifest.Permission.ReadMediaAudio);
+            }
+            else
+            {
+                permissions.Add(Manifest.Permission.ReadExternalStorage);
             }
 
             return permissions;

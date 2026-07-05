@@ -67,6 +67,7 @@ namespace DallyWorkReoprt.Controllers
             {
                 return ValidationErrorResponse("your account disabled contact administrator");
             }
+            var companyInfo = await _company.GetByIdAsync(employee.CompanyId);
             var tokenUser = new UserBasicDTO
             {
                 EmployeeID = employee!.EmployeeId,
@@ -76,6 +77,7 @@ namespace DallyWorkReoprt.Controllers
                 RoleType = employee.RoleType,
                 RoleId = employee.RoleMasterId ?? 0,
                 CompanyId = employee.CompanyId,
+                CompanyName = companyInfo?.CompanyName ?? "",
                 IsTenant = employee.Tenant,
                 DefaultBreakDuration = employee.DefaultBreakDuration
             };

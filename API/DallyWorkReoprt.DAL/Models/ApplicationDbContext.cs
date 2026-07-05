@@ -281,7 +281,7 @@ public partial class ApplicationDbContext : DbContext
         modelBuilder.Entity<CallRecording>(entity =>
         {
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-            entity.HasOne(d => d.PhoneCallLog).WithMany().HasForeignKey(d => d.CallLogId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(d => d.PhoneCallLog).WithMany(p => p.CallRecordings).HasForeignKey(d => d.CallLogId).OnDelete(DeleteBehavior.Cascade);
         });
         OnModelCreatingPartial(modelBuilder);
     }

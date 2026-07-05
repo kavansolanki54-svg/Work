@@ -58,6 +58,7 @@
     <PackageReference Include="Xamarin.AndroidX.Activity" Version="1.8.2.1" />
     <PackageReference Include="Xamarin.Google.Android.Material" Version="1.11.0.1" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData.Core.Ktx" Version="2.6.2.2" ExcludeAssets="all" />
+    <PackageReference Include="Xamarin.AndroidX.DocumentFile" Version="1.0.1.18" />
   </ItemGroup>
 
   <!-- SQLite -->
