@@ -43,6 +43,7 @@
     <RuntimeIdentifiers>android-arm;android-arm64;android-x86;android-x64</RuntimeIdentifiers>
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
     <ErrorOnDuplicateJavaClasses>false</ErrorOnDuplicateJavaClasses>
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
   </PropertyGroup>
 
   <!-- AndroidX and Material Design -->

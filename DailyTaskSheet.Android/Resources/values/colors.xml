@@ -17,4 +17,5 @@
 
     <color name="dividerColor">#E5E7EB</color>
     <color name="iconTint">#9CA3AF</color>
+    <color name="ic_launcher_background">#fafafa</color>
 </resources>
