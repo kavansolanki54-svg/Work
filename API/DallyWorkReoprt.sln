@@ -1,0 +1,56 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36811.4
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DallyWorkReoprt", "DallyWorkReoprt\DallyWorkReoprt.csproj", "{A70D53DC-E8D7-4F0D-8CCF-FF2BD9F36511}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DallyWorkReoprt.DTO", "DallyWorkReoprt.DTO\DallyWorkReoprt.DTO.csproj", "{FD9D85C1-A856-404D-984B-461D0AFF7FC6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DallyWorkReoprt.DAL", "DallyWorkReoprt.DAL\DallyWorkReoprt.DAL.csproj", "{D6CC7302-0F85-4EB2-B130-1BFD5608C3EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DallyWorkReoprt.Services", "DallyWorkReoprt.Services\DallyWorkReoprt.Services.csproj", "{5C6AD7E8-6CD2-4D7E-8EF4-36A8253A5B0A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DallyWorkReoprt.Utilities", "DallyWorkReoprt.Utilities\DallyWorkReoprt.Utilities.csproj", "{30B09F0A-7C72-4551-9B23-592F9C6B8E89}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "DallyWorkReoprt.DB", "DallyWorkReoprt.DB\DallyWorkReoprt.DB.sqlproj", "{774A900C-7697-4379-AA60-EBE8542572D1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A70D53DC-E8D7-4F0D-8CCF-FF2BD9F36511}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A70D53DC-E8D7-4F0D-8CCF-FF2BD9F36511}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A70D53DC-E8D7-4F0D-8CCF-FF2BD9F36511}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A70D53DC-E8D7-4F0D-8CCF-FF2BD9F36511}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD9D85C1-A856-404D-984B-461D0AFF7FC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD9D85C1-A856-404D-984B-461D0AFF7FC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD9D85C1-A856-404D-984B-461D0AFF7FC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD9D85C1-A856-404D-984B-461D0AFF7FC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6CC7302-0F85-4EB2-B130-1BFD5608C3EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6CC7302-0F85-4EB2-B130-1BFD5608C3EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6CC7302-0F85-4EB2-B130-1BFD5608C3EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6CC7302-0F85-4EB2-B130-1BFD5608C3EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C6AD7E8-6CD2-4D7E-8EF4-36A8253A5B0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C6AD7E8-6CD2-4D7E-8EF4-36A8253A5B0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C6AD7E8-6CD2-4D7E-8EF4-36A8253A5B0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C6AD7E8-6CD2-4D7E-8EF4-36A8253A5B0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30B09F0A-7C72-4551-9B23-592F9C6B8E89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30B09F0A-7C72-4551-9B23-592F9C6B8E89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30B09F0A-7C72-4551-9B23-592F9C6B8E89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30B09F0A-7C72-4551-9B23-592F9C6B8E89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{774A900C-7697-4379-AA60-EBE8542572D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{774A900C-7697-4379-AA60-EBE8542572D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{774A900C-7697-4379-AA60-EBE8542572D1}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{774A900C-7697-4379-AA60-EBE8542572D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{774A900C-7697-4379-AA60-EBE8542572D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{774A900C-7697-4379-AA60-EBE8542572D1}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5834C2FA-2105-495C-9B9B-9A7517C0F0A6}
+	EndGlobalSection
+EndGlobal

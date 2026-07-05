@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="4dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/callTypeIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/sym_call_incoming"
+            app:tint="@color/colorPrimary"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/phoneNumberText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            tools:text="+1 (555) 123-4567"
+            android:textColor="@color/textPrimary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="@id/callTypeIcon"
+            app:layout_constraintBottom_toBottomOf="@id/callTypeIcon"
+            app:layout_constraintStart_toEndOf="@id/callTypeIcon"
+            app:layout_constraintEnd_toStartOf="@id/durationText" />
+
+        <TextView
+            android:id="@+id/durationText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="5m 30s"
+            android:textColor="@color/textSecondary"
+            android:textSize="14sp"
+            app:layout_constraintTop_toTopOf="@id/phoneNumberText"
+            app:layout_constraintBottom_toBottomOf="@id/phoneNumberText"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/contactNameText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            tools:text="John Smith"
+            android:textColor="@color/textSecondary"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/phoneNumberText"
+            app:layout_constraintStart_toStartOf="@id/phoneNumberText"
+            app:layout_constraintEnd_toStartOf="@id/dateText" />
+
+        <TextView
+            android:id="@+id/dateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Today, 10:30 AM"
+            android:textColor="@color/textSecondary"
+            android:textSize="12sp"
+            app:layout_constraintTop_toTopOf="@id/contactNameText"
+            app:layout_constraintBottom_toBottomOf="@id/contactNameText"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/syncStatusBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="2dp"
+            android:background="@drawable/badge_bg"
+            tools:text="Pending"
+            android:textColor="@android:color/white"
+            android:textSize="10sp"
+            app:layout_constraintTop_toBottomOf="@id/contactNameText"
+            app:layout_constraintStart_toStartOf="@id/phoneNumberText" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

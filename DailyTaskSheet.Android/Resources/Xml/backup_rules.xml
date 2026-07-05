@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Auto Backup Rules
+    Exclude sensitive data from cloud backup to prevent credential leaks.
+-->
+<full-backup-content>
+    <!-- Include the SQLite database (call logs are not sensitive) -->
+    <include domain="database" path="dailytasksheet.db" />
+
+    <!-- Exclude shared preferences containing tokens and secrets -->
+    <exclude domain="sharedpref" path="daily_task_sheet_secure_prefs.xml" />
+    <exclude domain="sharedpref" path="daily_task_sheet_auth.xml" />
+
+    <!-- Exclude any cached files -->
+    <exclude domain="external" path="." />
+    <exclude domain="root" path="." />
+</full-backup-content>

@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[WorkLogs] (
+    [WorkLogId]        INT              IDENTITY (1, 1) NOT NULL,
+    [EmployeeId]       INT              NOT NULL,
+    [CompanyId]        INT              NOT NULL,
+    [ClientId]         INT              NOT NULL,
+    [ProjectId]        INT              NOT NULL,
+    [WorkDate]         DATETIME2 (7)    NOT NULL,
+    [InputTime]        DECIMAL (18, 2)  NOT NULL,
+    [TotalDuration]    DECIMAL (18, 2)  NOT NULL,
+    [TotalMinutes]     INT              NOT NULL,
+    [Mode]             NVARCHAR (MAX)   NOT NULL,
+    [Remarks]          NVARCHAR (MAX)   NULL,
+    [ActiveStatus]     TINYINT          DEFAULT ((1)) NOT NULL,
+    [CreateDate]       DATETIME2 (7)    DEFAULT (getdate()) NOT NULL,
+    [CreatedById]      NVARCHAR (100)   NOT NULL,
+    [ModifiedById]     NVARCHAR (100)   NULL,
+    [ModifiedDate]     DATETIME2 (7)    NULL,
+    [Guids]            UNIQUEIDENTIFIER DEFAULT (newid()) NOT NULL,
+    [OtherEmployeeIds] NVARCHAR (MAX)   NULL,
+    [StatusId]         INT              NOT NULL,
+    CONSTRAINT [PK_WorkLogs] PRIMARY KEY CLUSTERED ([WorkLogId] ASC),
+    CONSTRAINT [FK_WorkLogs_ClientMaster_ClientId] FOREIGN KEY ([ClientId]) REFERENCES [dbo].[ClientMaster] ([ClientID]),
+    CONSTRAINT [FK_WorkLogs_CompanyMaster_CompanyId] FOREIGN KEY ([CompanyId]) REFERENCES [dbo].[CompanyMaster] ([CompanyID]),
+    CONSTRAINT [FK_WorkLogs_EmployeeMaster_EmployeeId] FOREIGN KEY ([EmployeeId]) REFERENCES [dbo].[EmployeeMaster] ([EmployeeID]),
+    CONSTRAINT [FK_WorkLogs_StatusMaster_StatusId] FOREIGN KEY ([StatusId]) REFERENCES [dbo].[StatusMaster] ([StatusID])
+);
+

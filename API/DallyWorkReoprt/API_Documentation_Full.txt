@@ -1,0 +1,332 @@
+--------------------------------------------------------------------
+1. AUTHENTICATION API
+--------------------------------------------------------------------
+Controller: AuthController
+Method: Login
+[POST] /api/Auth/login (Public)
+Description: Authenticate user and receive JWT & Refresh tokens.
+
+Request Payload:
+{
+  "email": "admin@starrvixen.com",
+  "password": "password123"
+}
+
+Response (200 OK):
+{
+  "isSuccess": true,
+  "statusCode": 200,
+  "message": "Token Generated",
+  "data": {
+    "accessToken": "eyJhbGciOi...",
+    "refreshToken": "Vw7GgoAX...",
+    "user": {
+      "employeeID": 1,
+      "userName": "Kavan Solanki",
+      "email": "solankikavan134@gmail.com"
+    }
+  },
+  "errors": null
+}
+
+
+Controller: AuthController
+Method: SignUp
+[POST] /api/Auth/SignUp (Public)
+Description: Register a new company and admin profile.
+
+Request Payload:
+{
+  "companyName": "New Company Ltd",
+  "email": "admin@newco.com",
+  "password": "SecurePassword123",
+  "confirmPassword": "SecurePassword123"
+}
+
+Response (200 OK):
+{
+  "isSuccess": true,
+  "statusCode": 200,
+  "message": "User registered successfully.",
+  "data": null,
+  "errors": null
+}
+
+
+Controller: AuthController
+Method: RefreshToken
+[POST] /api/Auth/RefreshToken (Public)
+Description: Refresh an expired access token using a valid refresh token.
+
+Request Payload:
+{
+  "token": "eyJhbGciOi...",
+  "refreshToken": "Vw7GgoAX..."
+}
+
+Response (200 OK):
+{
+  "isSuccess": true,
+  "statusCode": 200,
+  "message": "Token refreshed",
+  "data": {
+    "accessToken": "eyJhbGciOi...",
+    "refreshToken": "new_ref_token"
+  },
+  "errors": null
+}
+
+
+--------------------------------------------------------------------
+2. MASTER DATA API
+--------------------------------------------------------------------
+Controller: MasterDataController
+Method: GetCountries
+[GET] /api/MasterData/countries (Authorized)
+Description: Get list of all available countries.
+
+Response (200 OK):
+{
+  "isSuccess": true,
+  "statusCode": 200,
+  "message": "Record listed successfully",
+  "data": [
+    { "id": 1, "name": "India", "code": "+91" }
+  ],
+  "errors": null
+}
+
+
+Controller: MasterDataController
+Method: GetStates
+[GET] /api/MasterData/states/{countryId} (Authorized)
+Description: Get list of states for a specific country.
+
+Response (200 OK):
+{
+  "isSuccess": true,
+  "statusCode": 200,
+  "message": "Record listed successfully",
+  "data": [
+    { "id": 1, "name": "Gujarat" }
+  ],
+  "errors": null
+}
+
+
+Controller: MasterDataController
+Method: GetLookups
+[GET] /api/MasterData/lookups/{typeName} (Authorized)
+Description: Get generic lookups (e.g., Gender, Role Type).
+
+Response (200 OK):
+{
+  "isSuccess": true,
+  "statusCode": 200,
+  "message": "Record listed successfully",
+  "data": [
+    { "id": 3, "name": "Male" }
+  ],
+  "errors": null
+}
+
+
+--------------------------------------------------------------------
+3. COMPANY MASTER API
+--------------------------------------------------------------------
+Controller: CompanyMasterController
+Method: GetById
+[GET] /api/CompanyMaster/{id} (Authorized)
+Description: Get company profile details.
+
+Response (200 OK):
+{
+  "isSuccess": true,
+  "data": {
+    "companyId": 4,
+    "companyName": "Kavan Inc",
+    "email": "kavan@gmail.com"
+  }
+}
+
+
+Controller: CompanyMasterController
+Method: Save/Update (Multipart/Form-Data)
+[POST/PUT] /api/CompanyMaster (Authorized)
+Description: Save or update company (supports LogoFile upload).
+
+Request Payload (Form-Data):
+companyName: "Kavan Inc"
+logoFile: [Binary File]
+countryId: 1
+stateId: 1
+
+
+--------------------------------------------------------------------
+4. EMPLOYEE MASTER API
+--------------------------------------------------------------------
+Controller: EmployeeMasterController
+Method: List
+[GET] /api/EmployeeMaster/list/{companyId} (Authorized)
+Description: List all employees in a company.
+
+Response (200 OK):
+{
+  "isSuccess": true,
+  "data": [
+    { "employeeId": 1, "firstName": "Kavan", "employeeName": "Kavan Solanki" }
+  ]
+}
+
+
+Controller: EmployeeMasterController
+Method: Save
+[POST] /api/EmployeeMaster/save (Authorized)
+Request Payload:
+{
+  "companyId": 4,
+  "roleMasterId": 1,
+  "firstName": "John",
+  "email": "john@doe.com",
+  "passwords": "plainpassword"
+}
+
+
+--------------------------------------------------------------------
+5. PROJECT OPERATIONAL API
+--------------------------------------------------------------------
+Controller: ProjectMasterController
+Method: List
+[GET] /api/ProjectMaster/List/{companyId} (Authorized)
+Description: List projects for a company.
+
+Response (200 OK):
+{
+  "isSuccess": true,
+  "data": [
+    { "projectId": 1, "projectName": "Internal ERP" }
+  ]
+}
+
+
+Controller: StatusMasterController
+Method: Save
+[POST] /api/StatusMaster/Save (Authorized)
+Request Payload:
+{
+  "statusName": "Completed",
+  "statusColor": "#00FF00",
+  "companyId": 4
+}
+
+
+Controller: ClientMasterController
+Method: List
+[GET] /api/ClientMaster/List/{companyId} (Authorized)
+Description: List all clients for a company.
+
+Response (200 OK):
+{
+  "isSuccess": true,
+  "data": [
+    { "clientId": 1, "clientName": "Acme Corp" }
+  ]
+}
+
+
+Controller: ModuleMasterController
+Method: Save
+[POST] /api/ModuleMaster/Save (Authorized)
+Description: Create or update a sub-module.
+
+Request Payload:
+{
+  "moduleName": "Reports",
+  "parentModuleId": 16,
+  "companyId": 4
+}
+
+
+--------------------------------------------------------------------
+6. ACCESS CONTROL API
+--------------------------------------------------------------------
+Controller: RoleMasterSoftwareModulesController
+Method: GetHierarchy
+[GET] /api/RoleMasterSoftwareModules/hierarchy/{roleId} (Authorized)
+Description: Get nested menu structure with permissions.
+
+Response (200 OK):
+{
+  "isSuccess": true,
+  "data": [
+    {
+      "moduleId": 1,
+      "name": "Administration",
+      "view": true,
+      "children": []
+    }
+  ]
+}
+
+
+Controller: RoleMasterSoftwareModulesController
+Method: UpdatePermissions
+[POST] /api/RoleMasterSoftwareModules/save (Authorized)
+Description: Update fine-grained permissions for a role.
+
+Request Payload:
+{
+  "roleId": 1,
+  "permissions": [
+    { "moduleId": 1, "view": true, "add": true, "edit": true, "delete": false }
+  ]
+}
+
+
+--------------------------------------------------------------------
+7. MENU API
+--------------------------------------------------------------------
+Controller: MenuController
+Method: Get
+[GET] /api/Menu/{roleId}/{isTenant?} (Authorized)
+Description: Retrieves dynamic navigation tree based on role/tenant.
+
+Response (200 OK):
+{
+  "isSuccess": true,
+  "data": [
+    { "moduleId": 1, "name": "Home", "icon": "bar-chart-2" }
+  ]
+}
+
+
+--------------------------------------------------------------------
+8. ROLE MASTER API
+--------------------------------------------------------------------
+Controller: RoleMasterController
+Method: GetAll
+[GET] /api/RoleMaster?companyId=4 (Authorized)
+Description: List roles for a company.
+
+Response (200 OK):
+{
+  "isSuccess": true,
+  "data": [
+    { "roleMasterId": 1, "roleName": "Manager" }
+  ]
+}
+
+
+Controller: RoleMasterController
+Method: Create
+[POST] /api/RoleMaster (Authorized)
+Description: Create a new Role.
+
+Request Payload:
+{
+  "companyId": 4,
+  "roleName": "SuperAdmin",
+  "roleTypeId": 1,
+  "descriptions": "Full access",
+  "activeStatus": 1
+}

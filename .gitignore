@@ -1,0 +1,11 @@
+node_modules/
+.next/
+dist/
+build/
+.env*
+!.env.example
+.DS_Store
+*.log
+.vs/
+bin/
+obj/
