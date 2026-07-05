@@ -11,13 +11,21 @@ namespace DailyTaskSheet.App.Activities
     /// Splash Activity serving as the application entry point.
     /// Checks authentication state and routes to the appropriate screen.
     /// </summary>
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true, NoHistory = true)]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true, NoHistory = true, Exported = true)]
     public class SplashActivity : AppCompatActivity
     {
         protected override async void OnCreate(Bundle? savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_splash);
+
+            // Initialize database asynchronously without blocking the UI thread
+            var app = (App)Application;
+            var dbService = app.GetService<DailyTaskSheet.App.SQLite.DatabaseService>();
+            if (dbService != null)
+            {
+                await dbService.InitializeAsync();
+            }
 
             // Minimum delay to show splash screen smoothly
             await Task.Delay(1500);

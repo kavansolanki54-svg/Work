@@ -96,6 +96,59 @@ namespace DailyTaskSheet.App.Services
             return await SendAsync<T>(HttpMethod.Delete, endpoint, null, true, cancellationToken);
         }
 
+        /// <inheritdoc />
+        public async Task<ApiResult<TResponse>> UploadFileAsync<TResponse>(string endpoint, string filePath, string fileParameterName = "file", CancellationToken cancellationToken = default)
+        {
+            var stopwatch = Stopwatch.StartNew();
+            string url = $"{_baseUrl}{endpoint}";
+            
+            try
+            {
+                using var request = new HttpRequestMessage(HttpMethod.Post, url);
+                
+                string? token = _preferenceService.GetString(AppConstants.PrefKeyAccessToken);
+                if (!string.IsNullOrEmpty(token))
+                {
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
+
+                using var content = new MultipartFormDataContent();
+                
+                // Add the file stream
+                var fileStream = new System.IO.FileStream(filePath, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+                var streamContent = new StreamContent(fileStream);
+                
+                // Set mime type for audio
+                streamContent.Headers.ContentType = new MediaTypeHeaderValue("audio/mp4");
+                
+                string fileName = System.IO.Path.GetFileName(filePath);
+                content.Add(streamContent, fileParameterName, fileName);
+                request.Content = content;
+
+                using var response = await _httpClient.SendAsync(request, cancellationToken);
+                stopwatch.Stop();
+
+                int statusCode = (int)response.StatusCode;
+                string responseBody = await response.Content.ReadAsStringAsync();
+
+                await LogApiCallAsync(endpoint, "POST", statusCode, $"[File Upload: {fileName}]", responseBody, stopwatch.ElapsedMilliseconds, response.IsSuccessStatusCode);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = JsonConvert.DeserializeObject<ApiResult<TResponse>>(responseBody, JsonSettings);
+                    return result ?? ApiResult<TResponse>.ErrorResult("Empty response from server.");
+                }
+
+                return HandleErrorResponse<TResponse>(response.StatusCode, responseBody, endpoint);
+            }
+            catch (Exception ex)
+            {
+                stopwatch.Stop();
+                _logger.Error("ApiClient", $"File upload error for {endpoint}", ex);
+                return ApiResult<TResponse>.ErrorResult($"Upload failed: {ex.Message}");
+            }
+        }
+
         /// <summary>
         /// Sends an HTTP request with optional authentication, logging, and error handling.
         /// </summary>

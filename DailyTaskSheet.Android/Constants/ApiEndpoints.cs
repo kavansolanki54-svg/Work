@@ -23,6 +23,9 @@ namespace DailyTaskSheet.App.Constants
         /// <summary>POST - Upload a batch of call log records.</summary>
         public const string SyncCallLogs = "/api/CallLogs/Sync";
 
+        /// <summary>POST - Upload a native audio recording file.</summary>
+        public const string UploadNativeRecording = "/api/CallLogs/UploadNativeRecording";
+
         /// <summary>GET - Retrieve synchronization history records.</summary>
         public const string SyncHistory = "/api/CallLogs/History";
 

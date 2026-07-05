@@ -48,4 +48,5 @@ public class PhoneCallLogResponseDto
     public int DurationInSeconds { get; set; }
     public string? SimId { get; set; }
     public DateTime CreateDate { get; set; }
+    public string? RecordingUrl { get; set; }
 }

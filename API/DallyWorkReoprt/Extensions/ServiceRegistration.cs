@@ -29,6 +29,7 @@ namespace DallyWorkReoprt.Extensions
             services.AddScoped<IEmailService, DallyWorkReoprt.Services.Implementations.EmailService>();
             services.AddScoped<IWorkLogRepository, WorkLogRepository>();
             services.AddScoped<IWorkLogService, DallyWorkReoprt.Services.Implementations.WorkLogService>();
+            services.AddScoped<ICallLogService, DallyWorkReoprt.Services.Implementations.CallLogService>();
 
             // Register AutoMapper
             services.AddAutoMapper(typeof(AutoMapperProfiles));

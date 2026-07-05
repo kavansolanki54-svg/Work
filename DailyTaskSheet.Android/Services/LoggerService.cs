@@ -12,18 +12,30 @@ namespace DailyTaskSheet.App.Services
     /// </summary>
     public class LoggerService : ILoggerService
     {
-        private readonly ILogRepository? _logRepository;
+        private readonly IServiceProvider _serviceProvider;
         private readonly bool _loggingEnabled;
 
         /// <summary>
         /// Initializes a new instance of <see cref="LoggerService"/>.
         /// </summary>
-        /// <param name="logRepository">The log repository for database persistence. Can be null during startup.</param>
+        /// <param name="serviceProvider">The service provider for lazy resolution.</param>
         /// <param name="loggingEnabled">Whether database logging is enabled.</param>
-        public LoggerService(ILogRepository? logRepository = null, bool loggingEnabled = true)
+        public LoggerService(IServiceProvider serviceProvider, bool loggingEnabled = true)
         {
-            _logRepository = logRepository;
+            _serviceProvider = serviceProvider;
             _loggingEnabled = loggingEnabled;
+        }
+
+        private ILogRepository? GetLogRepository()
+        {
+            try
+            {
+                return Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetService<ILogRepository>(_serviceProvider);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         /// <inheritdoc />
@@ -53,7 +65,7 @@ namespace DailyTaskSheet.App.Services
 
             Log.Error(tag, fullMessage);
 
-            if (_loggingEnabled && _logRepository != null)
+            if (_loggingEnabled && GetLogRepository() != null)
             {
                 LogToDbAsync(tag, message, "Error", exception).ConfigureAwait(false);
             }
@@ -68,7 +80,7 @@ namespace DailyTaskSheet.App.Services
 
             Log.Error(tag, fullMessage);
 
-            if (_loggingEnabled && _logRepository != null)
+            if (_loggingEnabled && GetLogRepository() != null)
             {
                 LogToDbAsync(tag, message, "Critical", exception).ConfigureAwait(false);
             }
@@ -77,7 +89,8 @@ namespace DailyTaskSheet.App.Services
         /// <inheritdoc />
         public async Task LogToDbAsync(string source, string message, string level, Exception? exception = null)
         {
-            if (_logRepository == null) return;
+            var logRepo = GetLogRepository();
+            if (logRepo == null) return;
 
             try
             {
@@ -92,7 +105,7 @@ namespace DailyTaskSheet.App.Services
                     CreatedAt = DateTime.UtcNow
                 };
 
-                await _logRepository.InsertErrorLogAsync(errorLog);
+                await logRepo.InsertErrorLogAsync(errorLog);
             }
             catch (Exception ex)
             {

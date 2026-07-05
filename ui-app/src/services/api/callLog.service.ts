@@ -13,6 +13,7 @@ export interface PhoneCallLog {
     durationInSeconds: number;
     simId?: string;
     createDate: string;
+    recordingUrl?: string;
 }
 
 export const callLogService = {

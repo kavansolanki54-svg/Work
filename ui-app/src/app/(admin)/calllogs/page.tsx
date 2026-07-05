@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { PhoneCall, Clock, Calendar, User, Search, PhoneIncoming, PhoneOutgoing, PhoneMissed } from "lucide-react";
 import { callLogService, PhoneCallLog } from "@/services/api/callLog.service";
+import { getFullUrl } from "@/services/api/apiConfig";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useState } from "react";
 
@@ -82,18 +83,19 @@ export default function CallLogsPage() {
                                 <th className="px-6 py-4">Start Time</th>
                                 <th className="px-6 py-4">Duration</th>
                                 <th className="px-6 py-4">Synced On</th>
+                                <th className="px-6 py-4">Recording</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
                             {isLoading ? (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-12 text-center text-slate-400 font-medium">
+                                    <td colSpan={7} className="px-6 py-12 text-center text-slate-400 font-medium">
                                         Loading call logs...
                                     </td>
                                 </tr>
                             ) : filteredLogs.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-12 text-center text-slate-400 font-medium">
+                                    <td colSpan={7} className="px-6 py-12 text-center text-slate-400 font-medium">
                                         No call logs found.
                                     </td>
                                 </tr>
@@ -136,6 +138,16 @@ export default function CallLogsPage() {
                                             <span className="text-xs text-slate-400">
                                                 {new Date(log.createDate).toLocaleDateString()}
                                             </span>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {log.recordingUrl ? (
+                                                <audio controls className="h-8 w-48" preload="none">
+                                                    <source src={getFullUrl(log.recordingUrl)} type="audio/mp4" />
+                                                    Your browser does not support the audio element.
+                                                </audio>
+                                            ) : (
+                                                <span className="text-xs text-slate-400 italic">No recording</span>
+                                            )}
                                         </td>
                                     </tr>
                                 ))

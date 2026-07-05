@@ -27,6 +27,13 @@ namespace DailyTaskSheet.App
         public static IServiceProvider ServiceProvider => _serviceProvider ?? throw new InvalidOperationException("ServiceProvider is not initialized.");
 
         /// <summary>
+        /// Default constructor required by the Android OS for reflection.
+        /// </summary>
+        public App()
+        {
+        }
+
+        /// <summary>
         /// Required constructor for Android Application subclasses.
         /// </summary>
         public App(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
@@ -43,9 +50,7 @@ namespace DailyTaskSheet.App
                 // 1. Initialize Dependency Injection
                 ConfigureServices();
 
-                // 2. Initialize Database synchronously to ensure it's ready before app runs
-                var dbService = GetService<DatabaseService>();
-                dbService?.InitializeAsync().GetAwaiter().GetResult();
+                // 2. Database is now initialized asynchronously in SplashActivity to prevent main thread deadlocks
 
                 // 3. Initialize Notification Channels (required for Android 8+)
                 var notificationService = GetService<INotificationService>();
@@ -113,6 +118,7 @@ namespace DailyTaskSheet.App
             services.AddSingleton<IApiClient, ApiClient>();
             services.AddSingleton<IAuthenticationService, AuthenticationService>();
             services.AddSingleton<ICallLogReaderService, CallLogReaderService>();
+            services.AddSingleton<INativeRecordingScannerService, NativeRecordingScannerService>();
             services.AddSingleton<ISyncService, SyncService>();
 
             // ViewModels

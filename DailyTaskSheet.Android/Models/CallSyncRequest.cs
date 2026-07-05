@@ -35,7 +35,7 @@ namespace DailyTaskSheet.App.Models
         public string AppVersion { get; set; } = string.Empty;
 
         /// <summary>Gets or sets the list of call log records to sync.</summary>
-        [JsonProperty("calls")]
+        [JsonProperty("logs")]
         public List<CallSyncItem> Calls { get; set; } = new List<CallSyncItem>();
     }
 
@@ -62,7 +62,7 @@ namespace DailyTaskSheet.App.Models
         public string CallType { get; set; } = string.Empty;
 
         /// <summary>Gets or sets the call duration in seconds.</summary>
-        [JsonProperty("duration")]
+        [JsonProperty("durationInSeconds")]
         public int Duration { get; set; }
 
         /// <summary>Gets or sets the call date/time in ISO 8601 format.</summary>
@@ -81,9 +81,9 @@ namespace DailyTaskSheet.App.Models
         [JsonProperty("countryIso")]
         public string CountryIso { get; set; } = string.Empty;
 
-        /// <summary>Gets or sets the SIM slot index.</summary>
-        [JsonProperty("simSlot")]
-        public int SimSlot { get; set; }
+        /// <summary>Gets or sets the SIM slot index/ID.</summary>
+        [JsonProperty("simId")]
+        public string SimId { get; set; } = string.Empty;
 
         /// <summary>Gets or sets the raw Android call log ID.</summary>
         [JsonProperty("rawCallLogId")]

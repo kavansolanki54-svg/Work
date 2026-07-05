@@ -32,6 +32,7 @@ namespace DailyTaskSheet.App.Services
         private readonly INetworkService _networkService;
         private readonly IPreferenceService _preferenceService;
         private readonly ILoggerService _logger;
+        private readonly INativeRecordingScannerService _recordingScanner;
         private static readonly SemaphoreSlim _syncLock = new SemaphoreSlim(1, 1);
 
         /// <inheritdoc />
@@ -50,7 +51,8 @@ namespace DailyTaskSheet.App.Services
             INotificationService notificationService,
             INetworkService networkService,
             IPreferenceService preferenceService,
-            ILoggerService logger)
+            ILoggerService logger,
+            INativeRecordingScannerService recordingScanner)
         {
             _callLogReader = callLogReader;
             _callLogRepo = callLogRepo;
@@ -62,6 +64,7 @@ namespace DailyTaskSheet.App.Services
             _networkService = networkService;
             _preferenceService = preferenceService;
             _logger = logger;
+            _recordingScanner = recordingScanner;
         }
 
         /// <inheritdoc />
@@ -175,14 +178,14 @@ namespace DailyTaskSheet.App.Services
 
                 // Build the sync request
                 var syncRequest = BuildSyncRequest(pendingRecords);
-                var result = await _apiClient.PostAsync<CallSyncRequest, CallSyncResponse>(
+                var result = await _apiClient.PostAsync<CallSyncRequest, int>(
                     ApiEndpoints.SyncCallLogs, syncRequest, cancellationToken);
 
-                if (result.Success && result.Data != null)
+                if (result.Success)
                 {
-                    totalUploaded = result.Data.Uploaded;
-                    totalDuplicates = result.Data.Duplicates;
-                    totalFailed = result.Data.Failed;
+                    totalUploaded = result.Data;
+                    totalDuplicates = 0; // API does not return this
+                    totalFailed = 0;
 
                     // Mark all as synced
                     await _callLogRepo.UpdateSyncStatusAsync(pendingIds, SyncStatusEnum.Synced, cancellationToken);
@@ -193,6 +196,34 @@ namespace DailyTaskSheet.App.Services
                     _notificationService.ShowSyncCompleteNotification(totalUploaded, totalDuplicates);
                     _logger.Info("SyncService",
                         $"Sync complete: Uploaded={totalUploaded}, Duplicates={totalDuplicates}, Failed={totalFailed}");
+
+                    // 5. Check for Native Call Recordings and upload them
+                    int empId = _authService.GetEmployeeId();
+                    foreach (var record in pendingRecords)
+                    {
+                        try
+                        {
+                            var recordingPath = await _recordingScanner.FindRecordingPathAsync(record.PhoneNumber, record.StartTime);
+                            if (!string.IsNullOrEmpty(recordingPath))
+                            {
+                                string endpoint = $"{ApiEndpoints.UploadNativeRecording}?employeeId={empId}&phoneNumber={Uri.EscapeDataString(record.PhoneNumber)}&startTime={Uri.EscapeDataString(record.StartTime.ToString("o"))}";
+                                var uploadResult = await _apiClient.UploadFileAsync<string>(endpoint, recordingPath, "file", cancellationToken);
+                                
+                                if (uploadResult.Success)
+                                {
+                                    _logger.Info("SyncService", $"Uploaded recording for {record.PhoneNumber}");
+                                }
+                                else
+                                {
+                                    _logger.Warning("SyncService", $"Failed to upload recording: {uploadResult.Message}");
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.Warning("SyncService", $"Exception while processing recording for {record.PhoneNumber}: {ex.Message}");
+                        }
+                    }
                 }
                 else
                 {
@@ -209,7 +240,7 @@ namespace DailyTaskSheet.App.Services
                 syncHistory.Duplicates = totalDuplicates;
                 syncHistory.Failed = totalFailed;
                 syncHistory.Status = totalFailed == 0 ? (int)SyncStatusEnum.Synced : (int)SyncStatusEnum.Failed;
-                syncHistory.Message = result.Data?.Message ?? result.Message ?? "Sync completed.";
+                syncHistory.Message = result.Message ?? "Sync completed.";
 
                 return syncHistory;
             }
@@ -293,7 +324,7 @@ namespace DailyTaskSheet.App.Services
                     StartTime = r.StartTime,
                     EndTime = r.EndTime,
                     CountryIso = r.CountryIso,
-                    SimSlot = r.SimSlot,
+                    SimId = r.SimSlot.ToString(),
                     RawCallLogId = r.RawCallLogId,
                     SyncHash = r.SyncHash
                 }).ToList()

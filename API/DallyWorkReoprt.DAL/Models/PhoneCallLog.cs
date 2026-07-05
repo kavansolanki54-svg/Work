@@ -39,4 +39,6 @@ public partial class PhoneCallLog
 
     [ForeignKey("EmployeeId")]
     public virtual EmployeeMaster Employee { get; set; } = null!;
+
+    public virtual ICollection<CallRecording> CallRecordings { get; set; } = new List<CallRecording>();
 }

@@ -107,7 +107,7 @@ namespace DailyTaskSheet.App.Constants
         public const int HttpMaxRetries = 3;
 
         /// <summary>Default API base URL (user-configurable).</summary>
-        public const string DefaultApiBaseUrl = "https://api.dailytasksheet.com";
+        public const string DefaultApiBaseUrl = "https://dts.runasp.net";
 
         // ══════════════════════════════════════════════════════════════════
         // Notification Channels

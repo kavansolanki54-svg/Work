@@ -63,7 +63,7 @@ public class CallLogService : ICallLogService
 
     public async Task<System.Collections.Generic.IEnumerable<PhoneCallLogResponseDto>> GetAllAsync(int? employeeId)
     {
-        var query = _context.PhoneCallLogs.Include(x => x.Employee).AsQueryable();
+        var query = _context.PhoneCallLogs.Include(x => x.Employee).Include(x => x.CallRecordings).AsQueryable();
 
         if (employeeId.HasValue && employeeId.Value > 0)
         {
@@ -82,7 +82,8 @@ public class CallLogService : ICallLogService
             EndTime = x.EndTime,
             DurationInSeconds = x.DurationInSeconds,
             SimId = x.SimId,
-            CreateDate = x.CreateDate
+            CreateDate = x.CreateDate,
+            RecordingUrl = x.CallRecordings.OrderByDescending(r => r.CreatedAt).Select(r => r.RecordingUrl).FirstOrDefault()
         }).ToListAsync();
     }
 }
