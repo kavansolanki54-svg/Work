@@ -1,10 +1,7 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using DallyWorkReoprt.DAL.Models;
 using DallyWorkReoprt.DTO.Models;
 using DallyWorkReoprt.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace DallyWorkReoprt.Services.Implementations;
 

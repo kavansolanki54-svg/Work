@@ -50,6 +50,7 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<WorkTimeLog> WorkTimeLogs { get; set; }
     public virtual DbSet<WorkLog> WorkLogs { get; set; }
     public virtual DbSet<WorkLogTask> WorkLogTasks { get; set; }
+    public virtual DbSet<PhoneCallLog> PhoneCallLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -267,6 +268,13 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.Guids).HasDefaultValueSql("(newid())");
             entity.HasOne(d => d.WorkLog).WithMany(p => p.WorkLogTasks).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<PhoneCallLog>(entity =>
+        {
+            entity.Property(e => e.ActiveStatus).HasDefaultValue((byte)1);
+            entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.Guids).HasDefaultValueSql("(newid())");
         });
         OnModelCreatingPartial(modelBuilder);
     }
