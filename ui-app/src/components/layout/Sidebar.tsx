@@ -8,7 +8,8 @@ import {
   ChevronRight,
   LogOut,
   Layers,
-  LayoutDashboard
+  LayoutDashboard,
+  PhoneCall
 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -61,6 +62,7 @@ export const Sidebar = () => {
     if (ctrl === "modulemaster") return "/module";
     if (ctrl === "emailsettings" || ctrl === "mailtemplate") return "/emailsettings";
     if (ctrl === "reports" || ctrl === "dailytasksheet" || ctrl === "workreport") return "/dallytasksheet";
+    if (ctrl === "calllogs" || ctrl === "phonecalllog") return "/calllogs";
     if (ctrl === "home") return "/dashboard";
 
     return "/" + ctrl.replace("master", "");
@@ -149,6 +151,32 @@ export const Sidebar = () => {
           .map((item: MenuItem) => (
             <NavItem key={item.moduleId} item={item} />
           ))}
+
+        {/* Static link for Call Logs */}
+        <div className="w-full">
+          <Link
+            href="/calllogs"
+            className={cn(
+              "w-full px-3 py-2 flex items-center justify-between rounded-lg transition-colors cursor-pointer group mb-1",
+              pathname === "/calllogs" ? "bg-primary/5 text-primary" : "text-slate-600 hover:bg-slate-50"
+            )}
+          >
+            <div className="flex items-center gap-3">
+              <div className={cn(
+                "transition-colors",
+                pathname === "/calllogs" ? "text-primary" : "text-slate-400 group-hover:text-primary"
+              )}>
+                <PhoneCall className="w-4 h-4" />
+              </div>
+              <span className={cn(
+                "tracking-tight text-sm",
+                pathname === "/calllogs" ? "font-bold" : "font-medium"
+              )}>
+                Call Logs
+              </span>
+            </div>
+          </Link>
+        </div>
       </nav>
 
     </aside>
