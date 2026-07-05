@@ -14,8 +14,7 @@ import {
   Target,
   Clock,
   HelpCircle,
-  Receipt,
-  PhoneCall
+  Receipt
 } from "lucide-react";
 
 export const iconMap: Record<string, React.ElementType> = {
@@ -31,7 +30,6 @@ export const iconMap: Record<string, React.ElementType> = {
   "fa-solid fa-building-columns": Building2,
   "target": Target,
   "clock": Clock,
-  "PhoneCall": PhoneCall,
 };
 
 export const getIcon = (iconName: string | null) => {

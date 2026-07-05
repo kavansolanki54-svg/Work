@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[EmployeeMaster] (
+CREATE TABLE [dbo].[EmployeeMaster] (
     [EmployeeID]        INT              IDENTITY (1, 1) NOT NULL,
     [CompanyID]         INT              NOT NULL,
     [RoleMasterID]      INT              NULL,
@@ -25,6 +25,7 @@
     [ModifiedDate]      DATETIME         CONSTRAINT [DF_EmployeeMaster_ModifiedDate] DEFAULT (getdate()) NULL,
     [Guids]             UNIQUEIDENTIFIER CONSTRAINT [DF_EmployeeMaster_Guids] DEFAULT (newid()) NOT NULL,
     [Tenant]            BIT              CONSTRAINT [DF_EmployeeMaster_Tenant] DEFAULT ((0)) NOT NULL,
+    [DefaultBreakDuration] INT              CONSTRAINT [DF_EmployeeMaster_DefaultBreakDuration] DEFAULT ((30)) NOT NULL,
     CONSTRAINT [PK_StaffMaster] PRIMARY KEY CLUSTERED ([EmployeeID] ASC) WITH (FILLFACTOR = 80),
     CONSTRAINT [FK_EmployeeMaster_Lookup] FOREIGN KEY ([GenderID]) REFERENCES [dbo].[Lookup] ([Id]),
     CONSTRAINT [FK_EmployeeMaster_RoleMaster] FOREIGN KEY ([RoleMasterID]) REFERENCES [dbo].[RoleMaster] ([RoleMasterId])

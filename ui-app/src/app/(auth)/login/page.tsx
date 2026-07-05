@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { Mail, Lock, LogIn } from "lucide-react";
+import { Mail, Lock, LogIn, ArrowRight, UserPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { authService } from "@/services/api/auth.service";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -54,19 +54,21 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-primary-50 to-white">
-      <div className="max-w-md w-full glass-card p-8 space-y-8 animate-in fade-in zoom-in duration-500">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
-            Welcome Back
+    <div className="min-h-screen flex items-center justify-center p-4 bg-slate-50 font-sans">
+      <div className="max-w-md w-full bg-white rounded-3xl border border-slate-200 shadow-2xl shadow-blue-500/5 p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+
+        <div className="space-y-2">
+          <h1 className="text-3xl font-black text-slate-800 tracking-tighter">
+            Welcome <span className="text-blue-600">Back</span>
           </h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Sign in to your DallyWorkReport account
+          <p className="text-sm font-medium text-slate-400 lowercase italic tracking-tight">
+            Sign in to your DailyWorkReport account
           </p>
         </div>
 
         {error && (
-          <div className="bg-red-50 text-red-500 p-3 rounded-lg text-sm text-center border border-red-100 animate-bounce">
+          <div className="bg-red-50 text-red-600 p-4 rounded-2xl text-xs font-bold border border-red-100 flex items-center gap-3 animate-bounce">
+            <div className="w-2 h-2 bg-red-500 rounded-full" />
             {error}
           </div>
         )}
@@ -77,7 +79,8 @@ export default function LoginPage() {
             label="Email Address"
             type="email"
             placeholder="admin@example.com"
-            icon={<Mail className="w-5 h-5" />}
+            icon={<Mail className="w-4 h-4" />}
+            className="bg-slate-50/50 border-slate-100 h-12"
             error={errors.email?.message}
           />
 
@@ -86,24 +89,39 @@ export default function LoginPage() {
             label="Password"
             type="password"
             placeholder="••••••••"
-            icon={<Lock className="w-5 h-5" />}
+            icon={<Lock className="w-4 h-4" />}
+            className="bg-slate-50/50 border-slate-100 h-12"
             error={errors.password?.message}
           />
 
-          <Button type="submit" className="w-full" isLoading={isSubmitting} size="lg">
-            Sign In
-            <LogIn className="w-5 h-5 ml-2" />
-          </Button>
-          
-          <div className="text-center">
-             <p className="text-sm text-gray-600">
-                Don't have an account?{" "}
-                <button type="button" onClick={() => router.push('/signup')} className="text-primary font-semibold hover:underline">
-                    Sign up here
-                </button>
-             </p>
+          <div className="pt-2">
+            <Button
+              type="submit"
+              className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold text-sm tracking-widest uppercase shadow-lg shadow-blue-600/20 transition-all active:scale-[0.98]"
+              isLoading={isSubmitting}
+            >
+              Sign In
+              <LogIn className="w-4 h-4 ml-3" />
+            </Button>
+          </div>
+
+          <div className="text-center pt-2">
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-loose">
+              Don't have an account?{" "}
+              <button
+                type="button"
+                onClick={() => router.push('/signup')}
+                className="text-blue-600 hover:text-blue-700 transition-colors flex items-center justify-center gap-1 mx-auto mt-1"
+              >
+                Create Account <ArrowRight className="w-3 h-3" />
+              </button>
+            </p>
           </div>
         </form>
+
+        <p className="text-center text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em]">
+          DailyWorkReport © {new Date().getFullYear()} All Rights Reserved
+        </p>
       </div>
     </div>
   );

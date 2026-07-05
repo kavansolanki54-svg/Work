@@ -11,7 +11,7 @@ namespace DallyWorkReoprt.Controllers
         {
             get
             {
-                var claim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value 
+                var claim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
                           ?? User.FindFirst("sub")?.Value;
                 return claim != null ? int.Parse(claim) : 0;
             }

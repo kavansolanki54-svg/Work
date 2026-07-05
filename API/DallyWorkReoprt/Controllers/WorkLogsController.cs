@@ -1,6 +1,6 @@
 using DallyWorkReoprt.DTO.Models;
-using DallyWorkReoprt.Services.Interfaces;
 using DallyWorkReoprt.Models;
+using DallyWorkReoprt.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DallyWorkReoprt.Controllers;
@@ -22,6 +22,13 @@ public class WorkLogsController : BaseApiController
     public async Task<IActionResult> GetAll(int? employeeId)
     {
         var logs = await _service.GetAllAsync(CurrentCompanyId, employeeId);
+        return Ok(ApiResponse<IEnumerable<WorkLogResponseDto>>.SuccessResponse(logs, "Logs retrieved successfully"));
+    }
+    
+    [HttpGet("ByDate/{date}/{employeeId?}")]
+    public async Task<IActionResult> GetByDate(DateTime date, int? employeeId)
+    {
+        var logs = await _service.GetByDateAsync(date, CurrentCompanyId, employeeId ?? CurrentEmployeeId);
         return Ok(ApiResponse<IEnumerable<WorkLogResponseDto>>.SuccessResponse(logs, "Logs retrieved successfully"));
     }
 
@@ -117,58 +124,17 @@ public class WorkLogsController : BaseApiController
         }
     }
 
-    [HttpGet("reset-schema-temp")]
-    [Microsoft.AspNetCore.Authorization.AllowAnonymous]
-    public async Task<IActionResult> ResetSchemaTemp([FromServices] DallyWorkReoprt.DAL.Models.ApplicationDbContext ctx)
+    [HttpGet("{id}/preview-email")]
+    public async Task<IActionResult> PreviewEmail(int id)
     {
-        var script = @"
-IF OBJECT_ID('WorkLogTasks') IS NOT NULL DROP TABLE WorkLogTasks;
-IF OBJECT_ID('WorkLogs') IS NOT NULL DROP TABLE WorkLogs;
-
-CREATE TABLE [WorkLogs] (
-    [WorkLogId] int NOT NULL IDENTITY,
-    [EmployeeId] int NOT NULL,
-    [CompanyId] int NOT NULL,
-    [ClientId] int NOT NULL,
-    [ProjectId] int NOT NULL,
-    [WorkDate] datetime2 NOT NULL,
-    [InputTime] decimal(18,2) NOT NULL,
-    [TotalDuration] decimal(18,2) NOT NULL,
-    [TotalMinutes] int NOT NULL,
-    [Mode] nvarchar(max) NOT NULL,
-    [Remarks] nvarchar(max) NULL,
-    [ActiveStatus] tinyint NOT NULL DEFAULT 1,
-    [CreateDate] datetime2 NOT NULL DEFAULT getdate(),
-    [CreatedById] nvarchar(100) NOT NULL,
-    [ModifiedById] nvarchar(100) NULL,
-    [ModifiedDate] datetime2 NULL,
-    [Guids] uniqueidentifier NOT NULL DEFAULT newid(),
-    [OtherEmployeeIds] nvarchar(max) NULL,
-    [StatusId] int NOT NULL,
-    CONSTRAINT [PK_WorkLogs] PRIMARY KEY ([WorkLogId])
-);
-
-CREATE TABLE [WorkLogTasks] (
-    [WorkLogTaskId] int NOT NULL IDENTITY,
-    [WorkLogId] int NOT NULL,
-    [Description] nvarchar(max) NOT NULL,
-    [StatusId] int NOT NULL,
-    [IsCompleted] bit NOT NULL,
-    [CreateDate] datetime2 NOT NULL DEFAULT getdate(),
-    [CreatedById] nvarchar(100) NOT NULL,
-    [Guids] uniqueidentifier NOT NULL DEFAULT newid(),
-    CONSTRAINT [PK_WorkLogTasks] PRIMARY KEY ([WorkLogTaskId])
-);
-
-ALTER TABLE [WorkLogs] ADD CONSTRAINT [FK_WorkLogs_ClientMaster_ClientId] FOREIGN KEY ([ClientId]) REFERENCES [ClientMaster] ([ClientID]);
-ALTER TABLE [WorkLogs] ADD CONSTRAINT [FK_WorkLogs_CompanyMaster_CompanyId] FOREIGN KEY ([CompanyId]) REFERENCES [CompanyMaster] ([CompanyID]);
-ALTER TABLE [WorkLogs] ADD CONSTRAINT [FK_WorkLogs_EmployeeMaster_EmployeeId] FOREIGN KEY ([EmployeeId]) REFERENCES [EmployeeMaster] ([EmployeeID]);
-ALTER TABLE [WorkLogs] ADD CONSTRAINT [FK_WorkLogs_StatusMaster_StatusId] FOREIGN KEY ([StatusId]) REFERENCES [StatusMaster] ([StatusID]);
-
-ALTER TABLE [WorkLogTasks] ADD CONSTRAINT [FK_WorkLogTasks_StatusMaster_StatusId] FOREIGN KEY ([StatusId]) REFERENCES [StatusMaster] ([StatusID]);
-ALTER TABLE [WorkLogTasks] ADD CONSTRAINT [FK_WorkLogTasks_WorkLogs_WorkLogId] FOREIGN KEY ([WorkLogId]) REFERENCES [WorkLogs] ([WorkLogId]) ON DELETE CASCADE;
-";
-        await Microsoft.EntityFrameworkCore.RelationalDatabaseFacadeExtensions.ExecuteSqlRawAsync(ctx.Database, script);
-        return Ok("Tables reset successfully via raw sql.");
+        try
+        {
+            var html = await _emailService.GetDailyWorkReportPreviewAsync(id);
+            return Ok(ApiResponse<string>.SuccessResponse(html, "Preview generated successfully"));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ApiResponse<string>.ErrorResponse(ex.Message));
+        }
     }
 }

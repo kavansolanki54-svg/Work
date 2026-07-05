@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace DallyWorkReoprt.DAL.Models;
 
@@ -84,6 +82,7 @@ public partial class EmployeeMaster
     public Guid Guids { get; set; }
 
     public bool Tenant { get; set; }
+    public int DefaultBreakDuration { get; set; } = 30;
 
     [InverseProperty("Employee")]
     public virtual ICollection<EmailRecipient> EmailRecipients { get; set; } = new List<EmailRecipient>();

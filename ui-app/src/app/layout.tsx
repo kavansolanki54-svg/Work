@@ -8,7 +8,7 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "DallyWorkReport | Admin Dashboard",
+  title: "DailyWorkReport | Admin Dashboard",
   description: "Modern production-ready admin dashboard for work reporting.",
 };
 

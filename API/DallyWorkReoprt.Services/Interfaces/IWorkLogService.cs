@@ -11,4 +11,5 @@ public interface IWorkLogService
     Task<bool> DeleteAsync(int id, string modifiedBy);
     Task<bool> SaveSessionAsync(WorkReportSessionDto session, int employeeId, int companyId, string userName);
     Task<bool> DeleteSessionByDateAsync(DateTime date, int employeeId, string userName);
+    Task<IEnumerable<WorkLogResponseDto>> GetByDateAsync(DateTime date, int companyId, int employeeId);
 }

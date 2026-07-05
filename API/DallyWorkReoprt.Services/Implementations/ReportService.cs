@@ -20,13 +20,23 @@ public class ReportService : IReportService
     public async Task<IEnumerable<ReportResponseDto>> GetAllAsync(int employeeId)
     {
         var reports = await _reportRepo.GetFullReportsAsync(employeeId);
-        return _mapper.Map<IEnumerable<ReportResponseDto>>(reports);
+        var mapped = _mapper.Map<IEnumerable<ReportResponseDto>>(reports);
+        foreach (var report in mapped)
+        {
+            report.Works = report.Works.OrderBy(w => w.SrNo).ToList();
+        }
+        return mapped;
     }
 
     public async Task<ReportResponseDto?> GetByIdAsync(int id)
     {
         var report = await _reportRepo.GetFullReportByIdAsync(id);
-        return _mapper.Map<ReportResponseDto>(report);
+        var mapped = _mapper.Map<ReportResponseDto>(report);
+        if (mapped != null)
+        {
+            mapped.Works = mapped.Works.OrderBy(w => w.SrNo).ToList();
+        }
+        return mapped;
     }
 
     public async Task<ReportResponseDto> CreateAsync(ReportCreateDto dto, int employeeId, string createdBy)

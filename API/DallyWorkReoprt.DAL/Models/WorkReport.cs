@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -32,6 +30,8 @@ public partial class WorkReport
     public DateTime? ModifiedDate { get; set; }
 
     public Guid Guids { get; set; }
+    public bool IsEmailSent { get; set; }
+    public DateTime? EmailSentDate { get; set; }
 
     [ForeignKey("EmployeeId")]
     public virtual EmployeeMaster Employee { get; set; } = null!;

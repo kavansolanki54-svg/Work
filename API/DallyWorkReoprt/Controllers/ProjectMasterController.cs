@@ -34,9 +34,9 @@ public class ProjectMasterController : BaseApiController
     public async Task<IActionResult> GetById(int id)
     {
         var project = await _projectRepo.GetByIdAsync(id);
-        if (project == null) 
+        if (project == null)
             return NotFound(ApiResponse<ProjectDTO>.ErrorResponse("Project not found"));
-        
+
         var dto = _mapper.Map<ProjectDTO>(project);
         return Ok(ApiResponse<ProjectDTO>.SuccessResponse(dto, "Project retrieved successfully"));
     }
@@ -74,11 +74,11 @@ public class ProjectMasterController : BaseApiController
         try
         {
             var project = await _projectRepo.GetByIdAsync(projectDTO.ProjectId);
-            if (project == null) 
+            if (project == null)
                 return NotFound(ApiResponse<ProjectMaster>.ErrorResponse("Project not found"));
 
             _mapper.Map(projectDTO, project);
-            
+
             var userName = User.Identity?.Name ?? "Admin";
             project.ModifiedById = userName.Length > 20 ? userName.Substring(0, 20) : userName;
             project.ModifiedDate = DateTime.Now;
@@ -99,11 +99,11 @@ public class ProjectMasterController : BaseApiController
         try
         {
             var project = await _projectRepo.GetByIdAsync(id);
-            if (project == null) 
+            if (project == null)
                 return NotFound(ApiResponse<ProjectMaster>.ErrorResponse("Project not found"));
 
             project.ActiveStatus = 0; // Soft delete pattern
-            
+
             var userName = User.Identity?.Name ?? "Admin";
             project.ModifiedById = userName.Length > 20 ? userName.Substring(0, 20) : userName;
             project.ModifiedDate = DateTime.Now;

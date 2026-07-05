@@ -25,7 +25,23 @@ public class WorkLogRepository : GenericRepository<WorkLog>, IWorkLogRepository
             query = query.Where(x => x.EmployeeId == employeeId.Value);
         }
 
-        return await query.OrderByDescending(x => x.WorkDate).ToListAsync();
+        return await query.OrderByDescending(x => x.WorkDate).ThenBy(x => x.WorkLogId).ToListAsync();
+    }
+
+    public async Task<IEnumerable<WorkLog>> GetLogsByDateAsync(int employeeId, DateTime date)
+    {
+        var startDate = date.Date;
+        var endDate = startDate.AddDays(1);
+
+        return await _context.WorkLogs
+            .Include(x => x.Employee)
+            .Include(x => x.Client)
+            .Include(x => x.Project)
+            .Include(x => x.WorkLogTasks)
+                .ThenInclude(t => t.Status)
+            .Where(x => x.EmployeeId == employeeId && x.WorkDate >= startDate && x.WorkDate < endDate && x.ActiveStatus == 1)
+            .OrderBy(x => x.WorkLogId)
+            .ToListAsync();
     }
 
     public async Task<WorkLog?> GetLogByIdAsync(int id)
@@ -41,19 +57,19 @@ public class WorkLogRepository : GenericRepository<WorkLog>, IWorkLogRepository
 
     public async Task DeleteByDateAsync(int employeeId, DateTime date)
     {
-        var logs = await _context.WorkLogs
-            .Include(x => x.WorkLogTasks)
-            .Where(x => x.EmployeeId == employeeId && x.WorkDate.Date == date.Date)
-            .ToListAsync();
+        var startDate = date.Date;
+        var endDate = startDate.AddDays(1);
 
-        if (logs.Any())
-        {
-            foreach (var log in logs)
-            {
-                _context.WorkLogTasks.RemoveRange(log.WorkLogTasks);
-            }
-            _context.WorkLogs.RemoveRange(logs);
-            await _context.SaveChangesAsync();
-        }
+        var logIds = _context.WorkLogs
+            .Where(x => x.EmployeeId == employeeId && x.WorkDate >= startDate && x.WorkDate < endDate)
+            .Select(x => x.WorkLogId);
+
+        await _context.WorkLogTasks
+            .Where(t => logIds.Contains(t.WorkLogId))
+            .ExecuteDeleteAsync();
+
+        await _context.WorkLogs
+            .Where(x => x.EmployeeId == employeeId && x.WorkDate >= startDate && x.WorkDate < endDate)
+            .ExecuteDeleteAsync();
     }
 }

@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[ClientMaster] (
     [ClientID]        INT              IDENTITY (1, 1) NOT NULL,
-    [ClientName]      NVARCHAR (200)   NOT NULL,
+    [ClientName]      NVARCHAR (500)   NOT NULL,
     [ClientShortCode] VARCHAR (50)     NULL,
     [CompanyID]       INT              NOT NULL,
     [ActiveStatus]    TINYINT          DEFAULT ((1)) NOT NULL,

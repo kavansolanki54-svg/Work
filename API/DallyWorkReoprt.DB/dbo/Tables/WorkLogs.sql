@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[WorkLogs] (
+CREATE TABLE [dbo].[WorkLogs] (
     [WorkLogId]        INT              IDENTITY (1, 1) NOT NULL,
     [EmployeeId]       INT              NOT NULL,
     [CompanyId]        INT              NOT NULL,
@@ -18,6 +18,8 @@
     [Guids]            UNIQUEIDENTIFIER DEFAULT (newid()) NOT NULL,
     [OtherEmployeeIds] NVARCHAR (MAX)   NULL,
     [StatusId]         INT              NOT NULL,
+    [IsEmailSent]      BIT              DEFAULT ((0)) NOT NULL,
+    [EmailSentDate]    DATETIME2 (7)    NULL,
     CONSTRAINT [PK_WorkLogs] PRIMARY KEY CLUSTERED ([WorkLogId] ASC),
     CONSTRAINT [FK_WorkLogs_ClientMaster_ClientId] FOREIGN KEY ([ClientId]) REFERENCES [dbo].[ClientMaster] ([ClientID]),
     CONSTRAINT [FK_WorkLogs_CompanyMaster_CompanyId] FOREIGN KEY ([CompanyId]) REFERENCES [dbo].[CompanyMaster] ([CompanyID]),

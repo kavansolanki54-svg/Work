@@ -25,6 +25,8 @@ export interface WorkLog {
     statusId: number;
     activeStatus: number;
     createDate: string;
+    isEmailSent: boolean;
+    emailSentDate?: string;
     client?: { clientId: number; clientName: string };
     project?: { projectId: number; projectName: string; projectColor?: string };
     tasks: WorkLogTask[];
@@ -51,6 +53,9 @@ export const workLogService = {
     getLogs: (employeeId?: number) => 
         api.get<ApiResponse<WorkLog[]>>(`/WorkLogs/List${employeeId ? `/${employeeId}` : ''}`),
     
+    getLogsByDate: (date: string, employeeId?: number) =>
+        api.get<ApiResponse<WorkLog[]>>(`/WorkLogs/ByDate/${date}${employeeId ? `/${employeeId}` : ''}`),
+    
     getLog: (id: number) =>
         api.get<ApiResponse<WorkLog>>(`/WorkLogs/${id}`),
     
@@ -71,4 +76,7 @@ export const workLogService = {
     
     sendEmail: (id: number) =>
         api.post<ApiResponse<boolean>>(`/WorkLogs/${id}/send-email`),
+
+    previewEmail: (id: number) =>
+        api.get<ApiResponse<string>>(`/WorkLogs/${id}/preview-email`),
 };

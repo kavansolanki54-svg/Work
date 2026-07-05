@@ -23,6 +23,7 @@ import { Select } from "@/components/ui/Select";
 import { roleService, Role, Permission } from "@/services/api/role.service";
 import { masterService } from "@/services/api/master.service";
 import { useAuthStore } from "@/store/useAuthStore";
+import { usePagePermissions } from "@/hooks/usePagePermissions";
 import { cn } from "@/utils/cn";
 import { toast } from "sonner";
 
@@ -30,6 +31,8 @@ export default function RoleMasterPage() {
   const queryClient = useQueryClient();
   const user = useAuthStore((state) => state.user);
   const companyId = user?.companyId || 1;
+
+  const { canCreate, canEdit, canDelete } = usePagePermissions("rolemaster");
 
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const [isPermissionModalOpen, setIsPermissionModalOpen] = useState(false);
@@ -164,10 +167,12 @@ export default function RoleMasterPage() {
           <p className="text-gray-500 mt-1 font-medium italic">Define organizational roles and set granular permissions.</p>
         </div>
 
-        <Button onClick={() => setIsRoleModalOpen(true)} className="gap-2 px-6 shadow-xl shadow-primary/20">
-          <Plus className="w-5 h-5" />
-          Create New Role
-        </Button>
+        {canCreate && (
+          <Button onClick={() => setIsRoleModalOpen(true)} className="gap-2 px-6 shadow-xl shadow-primary/20">
+            <Plus className="w-5 h-5" />
+            Create New Role
+          </Button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -189,18 +194,22 @@ export default function RoleMasterPage() {
 
                 {openMenuId === role.roleMasterId && (
                   <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-10 animate-in zoom-in-95 duration-200">
-                    <button
-                      onClick={() => handleEdit(role)}
-                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
-                    >
-                      <Edit className="w-4 h-4" /> Edit Role
-                    </button>
-                    <button
-                      onClick={() => handleDeleteClick(role.roleMasterId)}
-                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
-                    >
-                      <Trash2 className="w-4 h-4" /> Delete Role
-                    </button>
+                    {canEdit && (
+                      <button
+                        onClick={() => handleEdit(role)}
+                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                      >
+                        <Edit className="w-4 h-4" /> Edit Role
+                      </button>
+                    )}
+                    {canDelete && (
+                      <button
+                        onClick={() => handleDeleteClick(role.roleMasterId)}
+                        className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                      >
+                        <Trash2 className="w-4 h-4" /> Delete Role
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
@@ -213,7 +222,33 @@ export default function RoleMasterPage() {
       </div>
 
       {/* Role Creation / Edit Modal */}
-      <Modal isOpen={isRoleModalOpen} onClose={closeRoleModal} title={roleMasterId ? "Edit Role" : "Create New Role"} size="lg">
+      <Modal 
+        isOpen={isRoleModalOpen} 
+        onClose={closeRoleModal} 
+        title={roleMasterId ? "Edit Role" : "Create New Role"} 
+        size="lg"
+        footer={(
+          <>
+            <Button variant="outline" onClick={closeRoleModal}>
+              Cancel
+            </Button>
+            <Button
+              variant="success"
+              onClick={() => roleMutation.mutate({
+                roleMasterId: roleMasterId || undefined,
+                roleName: newRoleName,
+                roleTypeId: newRoleTypeId,
+                descriptions: newDescription,
+                companyId
+              })}
+              isLoading={roleMutation.isPending}
+              disabled={!newRoleName || newRoleTypeId === 0}
+            >
+              {roleMasterId ? "Update Role" : "Save Role"}
+            </Button>
+          </>
+        )}
+      >
         <div className="space-y-6">
           <Input
             label="Role Name"
@@ -241,27 +276,6 @@ export default function RoleMasterPage() {
             value={newDescription}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewDescription(e.target.value)}
           />
-
-          <div className="flex items-center gap-3 pt-4">
-            <Button variant="info" className="w-full gap-2 py-4" onClick={closeRoleModal}>
-              Cancel
-            </Button>
-            <Button
-              variant="success"
-              className="w-full gap-2 py-4"
-              onClick={() => roleMutation.mutate({
-                roleMasterId: roleMasterId || undefined,
-                roleName: newRoleName,
-                roleTypeId: newRoleTypeId,
-                descriptions: newDescription,
-                companyId
-              })}
-              isLoading={roleMutation.isPending}
-              disabled={!newRoleName || newRoleTypeId === 0}
-            >
-              {roleMasterId ? "Update" : "Save"}
-            </Button>
-          </div>
         </div>
       </Modal>
 
@@ -271,6 +285,16 @@ export default function RoleMasterPage() {
         onClose={() => setIsDeleteModalOpen(false)}
         title="Confirm Deletion"
         size="sm"
+        footer={(
+          <>
+            <Button variant="outline" onClick={() => setIsDeleteModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={confirmDelete}>
+              Yes, Delete
+            </Button>
+          </>
+        )}
       >
         <div className="space-y-4">
           <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center text-red-600 mx-auto">
@@ -282,14 +306,6 @@ export default function RoleMasterPage() {
               This action cannot be undone. This role will be removed or deactivated.
             </p>
           </div>
-          <div className="flex items-center gap-3 pt-4">
-            <Button variant="outline" className="w-full" onClick={() => setIsDeleteModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button variant="danger" className="w-full" onClick={confirmDelete}>
-              Yes, Delete
-            </Button>
-          </div>
         </div>
       </Modal>
 
@@ -299,10 +315,18 @@ export default function RoleMasterPage() {
         onClose={() => setIsPermissionModalOpen(false)}
         title={`Permission Tree: ${selectedRole?.roleName}`}
         size="xl"
+        footer={(
+          <>
+            <Button variant="outline" onClick={() => setIsPermissionModalOpen(false)}>Discard</Button>
+            <Button variant="success" onClick={() => permissionMutation.mutate(permissions)} isLoading={permissionMutation.isPending}>
+              Save All Permissions
+            </Button>
+          </>
+        )}
       >
         <div className="space-y-6">
-          <div className="bg-primary/5 p-4 rounded-xl border border-primary/10 mb-6">
-            <p className="text-sm text-primary font-medium">Set View/Add/Edit/Delete access for each software module. Changes are saved globally for this role.</p>
+          <div className="bg-primary/5 p-4 rounded-xl border border-primary/10 mb-6 font-medium text-sm text-primary">
+            Set View/Add/Edit/Delete access for each software module. Changes are saved globally for this role.
           </div>
 
           <div className="overflow-x-auto">
@@ -346,13 +370,6 @@ export default function RoleMasterPage() {
                 ))}
               </tbody>
             </table>
-          </div>
-
-          <div className="flex justify-end gap-3 pt-6 border-t border-gray-100">
-            <Button variant="outline" onClick={() => setIsPermissionModalOpen(false)}>Discard</Button>
-            <Button onClick={() => permissionMutation.mutate(permissions)} isLoading={permissionMutation.isPending}>
-              Save All Permissions
-            </Button>
           </div>
         </div>
       </Modal>

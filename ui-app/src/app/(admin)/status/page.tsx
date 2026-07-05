@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
 import { statusService, Status } from "@/services/api/status.service";
 import { useAuthStore } from "@/store/useAuthStore";
+import { usePagePermissions } from "@/hooks/usePagePermissions";
 import { toast } from "sonner";
 
 const getErrorMessage = (err: any) => {
@@ -38,6 +39,8 @@ export default function StatusMasterPage() {
   const queryClient = useQueryClient();
   const user = useAuthStore((state) => state.user);
   const companyId = user?.companyId || 1;
+
+  const { canCreate, canEdit, canDelete } = usePagePermissions("statusmaster");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingStatus, setEditingStatus] = useState<Status | null>(null);
@@ -125,10 +128,12 @@ export default function StatusMasterPage() {
           <p className="text-gray-500 mt-1 font-medium">Define task and project status categories.</p>
         </div>
 
-        <Button onClick={handleOpenAdd} className="gap-2 px-6 shadow-xl shadow-primary/20">
-          <Plus className="w-5 h-5" />
-          Create New Status
-        </Button>
+        {canCreate && (
+          <Button onClick={handleOpenAdd} className="gap-2 px-6 shadow-xl shadow-primary/20">
+            <Plus className="w-5 h-5" />
+            Create New Status
+          </Button>
+        )}
       </div>
 
       <div className="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
@@ -159,14 +164,20 @@ export default function StatusMasterPage() {
                 />
                 <h3 className="font-bold text-gray-900 truncate">{status.statusName}</h3>
               </div>
-              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button onClick={() => handleEdit(status)} className="p-1.5 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-primary transition-colors">
-                  <Edit2 className="w-3.5 h-3.5" />
-                </button>
-                <button onClick={() => deleteMutation.mutate(status.statusId)} className="p-1.5 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-500 transition-colors">
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
+              {(canEdit || canDelete) && (
+                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  {canEdit && (
+                    <button onClick={() => handleEdit(status)} className="p-1.5 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-primary transition-colors">
+                      <Edit2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                  {canDelete && (
+                    <button onClick={() => deleteMutation.mutate(status.statusId)} className="p-1.5 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-500 transition-colors">
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -177,8 +188,22 @@ export default function StatusMasterPage() {
         onClose={() => setIsModalOpen(false)}
         title={editingStatus ? "Update Status" : "Create New Status"}
         size="lg"
+        footer={(
+          <>
+            <Button variant="outline" type="button" onClick={() => setIsModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="submit" form="status-form" isLoading={mutation.isPending}>
+              {editingStatus ? "Update Status" : "Create Status"}
+            </Button>
+          </>
+        )}
       >
-        <form onSubmit={handleSubmit((data) => mutation.mutate(data))} className="space-y-8">
+        <form 
+          id="status-form"
+          onSubmit={handleSubmit((data) => mutation.mutate(data))} 
+          className="space-y-6"
+        >
           <Input
             {...register("statusName")}
             label="Status Name"
@@ -189,27 +214,22 @@ export default function StatusMasterPage() {
             autoFocus
           />
 
-          <div className="space-y-4">
-            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Status Color</label>
-            <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
-              <input
-                type="color"
-                {...register("statusColor")}
-                className="w-12 h-12 bg-transparent border-none cursor-pointer p-0"
-              />
+          <div className="space-y-3">
+            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1 mb-1.5 block">Status Color</label>
+            <div className="flex items-center gap-4 bg-gray-50 border border-gray-100 p-4 rounded-xl">
+              <div className="relative w-12 h-12 rounded-lg overflow-hidden border-4 border-white shadow-sm">
+                <input
+                  type="color"
+                  {...register("statusColor")}
+                  className="absolute inset-0 w-[200%] h-[200%] -translate-x-1/4 -translate-y-1/4 cursor-pointer"
+                />
+              </div>
               <div className="flex flex-col">
-                <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">{selectedColor}</span>
+                <span className="text-sm font-bold text-gray-700 font-mono tracking-wider">{selectedColor?.toUpperCase()}</span>
                 <span className="text-[10px] text-gray-400">Visual indicator for this status</span>
               </div>
             </div>
-            {errors.statusColor && <p className="text-xs text-red-500">{errors.statusColor.message}</p>}
-          </div>
-
-          <div className="pt-6 flex items-center justify-end gap-3 border-t border-gray-50">
-            <Button variant="outline" type="button" onClick={() => setIsModalOpen(false)} className="px-6">Cancel</Button>
-            <Button type="submit" isLoading={mutation.isPending} className="px-8 shadow-lg">
-              {editingStatus ? "Update Status" : "Create Status"}
-            </Button>
+            {errors.statusColor && <p className="text-xs text-red-500 mt-1">{errors.statusColor.message}</p>}
           </div>
         </form>
       </Modal>

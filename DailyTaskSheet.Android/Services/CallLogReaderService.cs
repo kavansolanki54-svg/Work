@@ -65,12 +65,15 @@ namespace DailyTaskSheet.App.Services
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
+                    long startOfTodayMs = new DateTimeOffset(DateTime.Today).ToUnixTimeMilliseconds();
+
                     string selection = lastProcessedId > 0
-                        ? $"{Android.Provider.BaseColumns.Id} > ?"
-                        : null!;
-                    string[]? selectionArgs = lastProcessedId > 0
-                        ? new[] { lastProcessedId.ToString() }
-                        : null;
+                        ? $"{Android.Provider.BaseColumns.Id} > ? AND {CallLog.Calls.Date} >= ?"
+                        : $"{CallLog.Calls.Date} >= ?";
+                    
+                    string[] selectionArgs = lastProcessedId > 0
+                        ? new[] { lastProcessedId.ToString(), startOfTodayMs.ToString() }
+                        : new[] { startOfTodayMs.ToString() };
                     string sortOrder = $"{Android.Provider.BaseColumns.Id} ASC";
 
                     cursor = _context.ContentResolver?.Query(

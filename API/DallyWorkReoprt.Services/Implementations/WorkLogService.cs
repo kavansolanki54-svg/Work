@@ -3,6 +3,7 @@ using DallyWorkReoprt.DAL.Interface;
 using DallyWorkReoprt.DAL.Models;
 using DallyWorkReoprt.DTO.Models;
 using DallyWorkReoprt.Services.Interfaces;
+using System.Transactions;
 
 namespace DallyWorkReoprt.Services.Implementations;
 
@@ -59,6 +60,8 @@ public class WorkLogService : IWorkLogService
 
     public async Task<bool> SaveSessionAsync(WorkReportSessionDto session, int employeeId, int companyId, string userName)
     {
+        using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
         // 1. Physically clear existing logs for the date to allow clean re-save
         await _repo.DeleteByDateAsync(employeeId, session.WorkDate);
 
@@ -79,7 +82,7 @@ public class WorkLogService : IWorkLogService
 
             foreach (var task in log.WorkLogTasks)
             {
-                if (task.StatusId <= 0) task.StatusId = 3; // Fix for FK constraint (3 is valid)
+                if (task.StatusId <= 0) task.StatusId = 3;
                 task.CreatedById = userName;
                 task.CreateDate = DateTime.Now;
                 task.Guids = Guid.NewGuid();
@@ -89,6 +92,7 @@ public class WorkLogService : IWorkLogService
         }
 
         await _repo.SaveAsync();
+        scope.Complete();
         return true;
     }
 
@@ -96,6 +100,12 @@ public class WorkLogService : IWorkLogService
     {
         await _repo.DeleteByDateAsync(employeeId, date);
         return true;
+    }
+    
+    public async Task<IEnumerable<WorkLogResponseDto>> GetByDateAsync(DateTime date, int companyId, int employeeId)
+    {
+        var logs = await _repo.GetLogsByDateAsync(employeeId, date.Date);
+        return _mapper.Map<IEnumerable<WorkLogResponseDto>>(logs);
     }
 
     public async Task<bool> UpdateAsync(int id, WorkLogCreateDto dto, string modifiedBy)
@@ -120,7 +130,7 @@ public class WorkLogService : IWorkLogService
         log.WorkLogTasks.Clear();
         foreach (var taskDto in dto.Tasks)
         {
-            if (taskDto.StatusId <= 0) taskDto.StatusId = 3; // Fix for FK constraint (3 is valid)
+            if (taskDto.StatusId <= 0) taskDto.StatusId = 3;
             log.WorkLogTasks.Add(new WorkLogTask
             {
                 WorkLogId = log.WorkLogId,

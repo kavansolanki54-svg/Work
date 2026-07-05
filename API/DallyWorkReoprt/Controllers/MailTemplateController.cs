@@ -72,12 +72,23 @@ public class MailTemplateController : BaseApiController
         if (dto.Id > 0)
         {
             existing = await _context.MailTemplates.FindAsync(dto.Id);
+            // Prevent overwriting the company-wide template (where EmployeeId is null)
+            // when saving an employee-specific template (dto.EmployeeId has value).
+            if (existing != null && existing.EmployeeId == null && dto.EmployeeId.HasValue)
+            {
+                existing = await _context.MailTemplates
+                    .Where(x => x.TemplateName == dto.TemplateName &&
+                                x.EmployeeId == dto.EmployeeId &&
+                                x.CompanyId == dto.CompanyId &&
+                                x.ActiveStatus == 1)
+                    .FirstOrDefaultAsync();
+            }
         }
-        else 
+        else
         {
             existing = await _context.MailTemplates
-                .Where(x => x.TemplateName == dto.TemplateName && 
-                            x.EmployeeId == dto.EmployeeId && 
+                .Where(x => x.TemplateName == dto.TemplateName &&
+                            x.EmployeeId == dto.EmployeeId &&
                             x.CompanyId == dto.CompanyId &&
                             x.ActiveStatus == 1)
                 .FirstOrDefaultAsync();
@@ -86,11 +97,12 @@ public class MailTemplateController : BaseApiController
         if (existing == null)
         {
             var template = _mapper.Map<MailTemplate>(dto);
+            template.Id = 0; // Reset Id to generate a new Identity PK in database
             template.CreatedById = CurrentUserName;
             template.CreateDate = DateTime.Now;
             template.Guids = Guid.NewGuid();
             template.ActiveStatus = 1;
-            
+
             _context.MailTemplates.Add(template);
         }
         else

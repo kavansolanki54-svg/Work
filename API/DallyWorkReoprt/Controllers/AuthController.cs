@@ -1,9 +1,9 @@
+using AutoMapper;
 using DallyWorkReoprt.DAL.Interface;
 using DallyWorkReoprt.DAL.Models;
 using DallyWorkReoprt.DTO.Models;
 using DallyWorkReoprt.Models;
 using DallyWorkReoprt.Utilities.Helper;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -18,7 +18,6 @@ namespace DallyWorkReoprt.Controllers
     public class AuthController : BaseApiController
     {
         IAuthenticateRepository _Authenticate;
-        IMapper _Mapper;
         IConfiguration _Config;
         private ICompanyMasterRepository _company;
         private IConfiguration _configuration;
@@ -27,7 +26,6 @@ namespace DallyWorkReoprt.Controllers
             employee, IConfiguration configuration, ICompanyMasterRepository Company)
         {
             _Authenticate = user;
-            _Mapper = mapper;
             _Config = config;
             _employee = employee;
             _configuration = configuration;
@@ -44,8 +42,7 @@ namespace DallyWorkReoprt.Controllers
             var IsValidUser = await _Authenticate.IsValidEmployeeAsync(login.Email, new EncryptionHelper().Encrypt(login.Password), ActiveStatus: Convert.ToByte(1));
             if (!IsValidUser)
             {
-                ModelState.AddModelError("", "Invalid Credentials");
-                return ValidationErrorResponse();
+                return ValidationErrorResponse("Invalid Credentials");
             }
             var employee = _Authenticate.GetEmployeeQueryable(login.Email, new EncryptionHelper().Encrypt(login.Password), ActiveStatus: Convert.ToByte(1))
                 .Select(s => new
@@ -58,29 +55,29 @@ namespace DallyWorkReoprt.Controllers
                     s.Tenant,
                     s.IsAllowLogin,
                     s.CompanyId,
-                    s.RoleMasterId
+                    s.RoleMasterId,
+                    s.DefaultBreakDuration
                 }).FirstOrDefault();
 
             if (employee == null)
             {
-                ModelState.AddModelError("", "unable to find user data");
-                return ValidationErrorResponse();
+                return ValidationErrorResponse("unable to find user data");
             }
             if (Convert.ToInt16(employee?.IsAllowLogin) == 0)
             {
-                ModelState.AddModelError("", "your account disabled contact administrator");
-                return ValidationErrorResponse();
+                return ValidationErrorResponse("your account disabled contact administrator");
             }
             var tokenUser = new UserBasicDTO
             {
                 EmployeeID = employee!.EmployeeId,
-                UserName = employee.EmployeeName,
+                UserName = employee.EmployeeName ?? "",
                 Email = employee.Email,
                 RoleName = employee.RoleName,
                 RoleType = employee.RoleType,
                 RoleId = employee.RoleMasterId ?? 0,
                 CompanyId = employee.CompanyId,
-                IsTenant = employee.Tenant
+                IsTenant = employee.Tenant,
+                DefaultBreakDuration = employee.DefaultBreakDuration
             };
             TokenResponse tokenResponse = GenerateTokens(tokenUser);
             return Ok(ApiResponse<TokenResponse>.SuccessResponse(tokenResponse, "Token Generated"));
@@ -96,8 +93,7 @@ namespace DallyWorkReoprt.Controllers
 
             if (!_configuration.GetValue<bool>("AllowSignUp"))
             {
-                ModelState.AddModelError("", "Sign up is currently disabled.");
-                return ValidationErrorResponse();
+                return ValidationErrorResponse("Sign up is currently disabled.");
             }
 
             try
@@ -140,8 +136,7 @@ namespace DallyWorkReoprt.Controllers
             catch (Exception ex)
             {
                 var fullMessage = ex.Message + (ex.InnerException != null ? " | Inner: " + ex.InnerException.Message : "");
-                ModelState.AddModelError("", "Unable to complete signup: " + fullMessage);
-                return ValidationErrorResponse();
+                return ValidationErrorResponse("Unable to complete signup: " + fullMessage);
             }
         }
 

@@ -16,12 +16,12 @@ export const Button = ({
   ...props
 }: ButtonProps) => {
   const variants = {
-    primary: "bg-gradient-to-br from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white shadow-[0_4px_14px_0_rgba(59,130,246,0.39)] hover:shadow-[0_6px_20px_rgba(59,130,246,0.23)]",
+    primary: "bg-blue-600 hover:bg-blue-700 text-white shadow-md transition-all active:scale-[0.98]",
     secondary: "bg-slate-100 hover:bg-slate-200 text-slate-800",
-    outline: "bg-white border border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50 shadow-sm",
-    danger: "bg-gradient-to-br from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white shadow-[0_4px_14px_0_rgba(244,63,94,0.39)]",
-    success: "bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-[0_4px_14px_0_rgba(16,185,129,0.39)]",
-    info: "bg-gradient-to-br from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white shadow-md",
+    outline: "bg-white border border-slate-200 text-blue-600 hover:bg-slate-50 hover:border-blue-200 transition-all active:scale-[0.98]",
+    danger: "bg-red-500 hover:bg-red-600 text-white shadow-md transition-all active:scale-[0.98]",
+    success: "bg-[#81D9BC] hover:bg-[#6ecbb0] text-white shadow-md transition-all active:scale-[0.98]",
+    info: "bg-cyan-500 hover:bg-cyan-600 text-white shadow-md transition-all active:scale-[0.98]",
     ghost: "bg-transparent hover:bg-slate-100 text-slate-600",
   };
 

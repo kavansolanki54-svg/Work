@@ -34,9 +34,9 @@ public class ModuleMasterController : BaseApiController
     public async Task<IActionResult> GetById(int id)
     {
         var module = await _moduleRepo.GetByIdAsync(id);
-        if (module == null) 
+        if (module == null)
             return NotFound(ApiResponse<ModuleDTO>.ErrorResponse("Module not found"));
-        
+
         var dto = _mapper.Map<ModuleDTO>(module);
         return Ok(ApiResponse<ModuleDTO>.SuccessResponse(dto, "Module retrieved successfully"));
     }
@@ -50,7 +50,7 @@ public class ModuleMasterController : BaseApiController
         module.Guids = Guid.NewGuid();
         module.CreateDate = DateTime.Now;
         module.ActiveStatus = 1;
-        
+
         var userName = User.Identity?.Name ?? "Admin";
         module.CreatedById = userName.Length > 20 ? userName.Substring(0, 20) : userName;
 
@@ -66,11 +66,11 @@ public class ModuleMasterController : BaseApiController
         if (!ModelState.IsValid) return ValidationErrorResponse();
 
         var module = await _moduleRepo.GetByIdAsync(moduleDTO.ModuleId);
-        if (module == null) 
+        if (module == null)
             return NotFound(ApiResponse<ModuleMaster>.ErrorResponse("Module not found"));
 
         _mapper.Map(moduleDTO, module);
-        
+
         var userName = User.Identity?.Name ?? "Admin";
         module.ModifiedById = userName.Length > 20 ? userName.Substring(0, 20) : userName;
         module.ModifiedDate = DateTime.Now;
@@ -85,11 +85,11 @@ public class ModuleMasterController : BaseApiController
     public async Task<IActionResult> Delete(int id)
     {
         var module = await _moduleRepo.GetByIdAsync(id);
-        if (module == null) 
+        if (module == null)
             return NotFound(ApiResponse<ModuleMaster>.ErrorResponse("Module not found"));
 
         module.ActiveStatus = 0; // Soft delete pattern
-        
+
         var userName = User.Identity?.Name ?? "Admin";
         module.ModifiedById = userName.Length > 20 ? userName.Substring(0, 20) : userName;
         module.ModifiedDate = DateTime.Now;

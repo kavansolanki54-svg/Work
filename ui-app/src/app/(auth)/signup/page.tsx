@@ -144,9 +144,14 @@ export default function SignupPage() {
           </div>
         </form>
 
-        <p className="text-center text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em]">
-            By creating an account, you agree to our <span className="text-slate-400 underline cursor-pointer">Terms of Service</span>
-        </p>
+        <div className="space-y-2">
+            <p className="text-center text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em]">
+                By creating an account, you agree to our <span className="text-slate-400 underline cursor-pointer">Terms of Service</span>
+            </p>
+            <p className="text-center text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em]">
+                DailyWorkReport © {new Date().getFullYear()} All Rights Reserved
+            </p>
+        </div>
       </div>
     </div>
   );

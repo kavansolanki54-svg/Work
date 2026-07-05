@@ -1,7 +1,7 @@
+using AutoMapper;
 using DallyWorkReoprt.DAL.Models;
 using DallyWorkReoprt.DTO.Models;
 using DallyWorkReoprt.Utilities.Helper;
-using AutoMapper;
 
 namespace DallyWorkReoprt.Mappings
 {
@@ -43,15 +43,16 @@ namespace DallyWorkReoprt.Mappings
                 .ReverseMap();
 
             CreateMap<WorkTimeLog, TimeLogResponseDto>()
-                .AfterMap((src, dest) => {
+                .AfterMap((src, dest) =>
+                {
                     if (TimeSpan.TryParse(src.InTime, out var inTime) && TimeSpan.TryParse(src.OutTime, out var outTime))
                     {
                         var diff = outTime - inTime;
                         if (diff.TotalMinutes < 0) diff = diff.Add(TimeSpan.FromDays(1)); // Handle overnight
-                        
+
                         var totalMin = (int)diff.TotalMinutes;
                         if (src.Is30MinBreak && totalMin >= 30) totalMin -= 30;
-                        
+
                         dest.TotalMinutes = totalMin;
                         dest.Hours = totalMin / 60;
                         dest.Minutes = totalMin % 60;
@@ -59,7 +60,7 @@ namespace DallyWorkReoprt.Mappings
                     }
                 })
                 .ReverseMap();
-            
+
             CreateMap<ReportCreateDto, WorkReport>()
                 .ForMember(d => d.WorkEntries, o => o.MapFrom(s => s.Works))
                 .ForMember(d => d.ReportDate, o => o.MapFrom(s => DateOnly.FromDateTime(s.ReportDate)));

@@ -88,4 +88,6 @@ public class ReportResponseDto
     public List<WorkEntryResponseDto> Works { get; set; } = new();
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+    public bool IsEmailSent { get; set; }
+    public DateTime? EmailSentDate { get; set; }
 }

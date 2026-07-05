@@ -34,9 +34,9 @@ public class StatusMasterController : BaseApiController
     public async Task<IActionResult> GetById(int id)
     {
         var status = await _statusRepo.GetByIdAsync(id);
-        if (status == null) 
+        if (status == null)
             return NotFound(ApiResponse<StatusDTO>.ErrorResponse("Status not found"));
-        
+
         var dto = _mapper.Map<StatusDTO>(status);
         return Ok(ApiResponse<StatusDTO>.SuccessResponse(dto, "Status retrieved successfully"));
     }
@@ -50,7 +50,7 @@ public class StatusMasterController : BaseApiController
         status.Guids = Guid.NewGuid();
         status.CreateDate = DateTime.Now;
         status.ActiveStatus = 1;
-        
+
         var userName = User.Identity?.Name ?? "Admin";
         status.CreatedById = userName.Length > 20 ? userName.Substring(0, 20) : userName;
 
@@ -66,11 +66,11 @@ public class StatusMasterController : BaseApiController
         if (!ModelState.IsValid) return ValidationErrorResponse();
 
         var status = await _statusRepo.GetByIdAsync(statusDTO.StatusId);
-        if (status == null) 
+        if (status == null)
             return NotFound(ApiResponse<StatusMaster>.ErrorResponse("Status not found"));
 
         _mapper.Map(statusDTO, status);
-        
+
         var userName = User.Identity?.Name ?? "Admin";
         status.ModifiedById = userName.Length > 20 ? userName.Substring(0, 20) : userName;
         status.ModifiedDate = DateTime.Now;
@@ -85,11 +85,11 @@ public class StatusMasterController : BaseApiController
     public async Task<IActionResult> Delete(int id)
     {
         var status = await _statusRepo.GetByIdAsync(id);
-        if (status == null) 
+        if (status == null)
             return NotFound(ApiResponse<StatusMaster>.ErrorResponse("Status not found"));
 
         status.ActiveStatus = 0; // Soft delete pattern
-        
+
         var userName = User.Identity?.Name ?? "Admin";
         status.ModifiedById = userName.Length > 20 ? userName.Substring(0, 20) : userName;
         status.ModifiedDate = DateTime.Now;

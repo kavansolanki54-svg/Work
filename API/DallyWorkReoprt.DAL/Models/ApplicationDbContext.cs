@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
 namespace DallyWorkReoprt.DAL.Models;
@@ -37,21 +35,14 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
 
     public virtual DbSet<RoleMaster> RoleMasters { get; set; }
-
-    // Kept as alias for backward compatibility with repositories
     public virtual DbSet<RoleMasterSoftwareModule> RoleSoftwareModules { get; set; }
     public virtual DbSet<RoleMasterSoftwareModule> RoleMasterSoftwareModules { get; set; }
-
-    // Kept as alias for backward compatibility with repositories
     public virtual DbSet<SoftwareModulesMaster> SoftwareModules { get; set; }
     public virtual DbSet<SoftwareModulesMaster> SoftwareModulesMasters { get; set; }
 
     public virtual DbSet<StateMaster> StateMasters { get; set; }
 
     public virtual DbSet<StatusMaster> StatusMasters { get; set; }
-
-    public virtual DbSet<User> Users { get; set; }
-
     public virtual DbSet<WorkReport> WorkReports { get; set; }
 
     public virtual DbSet<WorkEntry> WorkEntries { get; set; }
@@ -59,7 +50,6 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<WorkTimeLog> WorkTimeLogs { get; set; }
     public virtual DbSet<WorkLog> WorkLogs { get; set; }
     public virtual DbSet<WorkLogTask> WorkLogTasks { get; set; }
-    public virtual DbSet<PhoneCallLog> PhoneCallLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -68,6 +58,7 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.ActiveStatus).HasDefaultValue((byte)1);
             entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.Guids).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.IsEmailSent).HasDefaultValue(false);
         });
 
         modelBuilder.Entity<WorkEntry>(entity =>
@@ -255,10 +246,6 @@ public partial class ApplicationDbContext : DbContext
                 .HasConstraintName("FK_StatusMaster_CompanyMaster");
         });
 
-        modelBuilder.Entity<User>(entity =>
-        {
-            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-        });
 
         modelBuilder.Entity<MailTemplate>(entity =>
         {
@@ -272,6 +259,7 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.ActiveStatus).HasDefaultValue((byte)1);
             entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.Guids).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.IsEmailSent).HasDefaultValue(false);
         });
 
         modelBuilder.Entity<WorkLogTask>(entity =>
@@ -279,13 +267,6 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.Guids).HasDefaultValueSql("(newid())");
             entity.HasOne(d => d.WorkLog).WithMany(p => p.WorkLogTasks).OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<PhoneCallLog>(entity =>
-        {
-            entity.Property(e => e.ActiveStatus).HasDefaultValue((byte)1);
-            entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
-            entity.Property(e => e.Guids).HasDefaultValueSql("(newid())");
         });
         OnModelCreatingPartial(modelBuilder);
     }

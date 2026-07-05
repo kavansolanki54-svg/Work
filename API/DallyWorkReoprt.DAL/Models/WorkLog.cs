@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+using Microsoft.EntityFrameworkCore;
+
 namespace DallyWorkReoprt.DAL.Models;
 
 [Table("WorkLogs")]
@@ -52,6 +54,8 @@ public partial class WorkLog
     public string? OtherEmployeeIds { get; set; }
 
     public int StatusId { get; set; }
+    public bool IsEmailSent { get; set; }
+    public DateTime? EmailSentDate { get; set; }
 
     [ForeignKey("ClientId")]
     public virtual ClientMaster Client { get; set; } = null!;

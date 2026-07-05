@@ -32,9 +32,9 @@ public class ReportsController : BaseApiController
     public async Task<IActionResult> GetReport(int id)
     {
         var report = await _service.GetByIdAsync(id);
-        if (report == null) 
+        if (report == null)
             return NotFound(ApiResponse<ReportResponseDto>.ErrorResponse("Report not found"));
-            
+
         return Ok(ApiResponse<ReportResponseDto>.SuccessResponse(report, "Report retrieved successfully"));
     }
 
@@ -53,8 +53,8 @@ public class ReportsController : BaseApiController
         if (!ModelState.IsValid) return ValidationErrorResponse();
 
         var success = await _service.UpdateAsync(id, reportDto, CurrentUserName);
-        
-        if (!success) 
+
+        if (!success)
             return NotFound(ApiResponse<bool>.ErrorResponse("Report not found or update failed"));
 
         return Ok(ApiResponse<bool>.SuccessResponse(true, "Report updated successfully"));
@@ -64,8 +64,8 @@ public class ReportsController : BaseApiController
     public async Task<IActionResult> Delete(int id)
     {
         var success = await _service.DeleteAsync(id, CurrentUserName);
-        
-        if (!success) 
+
+        if (!success)
             return NotFound(ApiResponse<bool>.ErrorResponse("Report not found"));
 
         return Ok(ApiResponse<bool>.SuccessResponse(true, "Report deleted successfully"));
@@ -82,6 +82,20 @@ public class ReportsController : BaseApiController
         catch (Exception ex)
         {
             return BadRequest(ApiResponse<bool>.ErrorResponse(ex.Message));
+        }
+    }
+
+    [HttpGet("{id}/preview-email")]
+    public async Task<IActionResult> PreviewEmail(int id)
+    {
+        try
+        {
+            var html = await _emailService.GetDailyTaskSheetPreviewAsync(id);
+            return Ok(ApiResponse<string>.SuccessResponse(html, "Preview generated successfully"));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ApiResponse<string>.ErrorResponse(ex.Message));
         }
     }
 }

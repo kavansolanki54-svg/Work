@@ -1,7 +1,4 @@
-using DallyWorkReoprt.DAL.Models;
 using Microsoft.Extensions.DependencyInjection;
-using System.Net;
-using System.Net.Mail;
 
 
 namespace DallyWorkReoprt.Services.BackgroundService

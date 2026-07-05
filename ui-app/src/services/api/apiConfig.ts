@@ -1,4 +1,8 @@
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://dts.runasp.net";
+import { env } from "@/utils/env";
+
+const isClient = typeof window !== "undefined";
+
+export const API_BASE_URL = env.NEXT_PUBLIC_API_BASE_URL;
 export const API_URL = `${API_BASE_URL}/api`;
 
 /**

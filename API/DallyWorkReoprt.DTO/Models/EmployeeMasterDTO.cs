@@ -9,6 +9,8 @@ namespace DallyWorkReoprt.DTO.Models
 
         public int CompanyId { get; set; }
 
+        public int DefaultBreakDuration { get; set; } = 30;
+
         [Required(ErrorMessage = "Role is required.")]
         [Display(Name = "Role")]
         public int RoleMasterId { get; set; }

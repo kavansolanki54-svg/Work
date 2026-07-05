@@ -26,56 +26,45 @@ export const ConfirmDialog = () => {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div 
-        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300"
+        className="absolute inset-0 bg-black/50 animate-in fade-in duration-300"
         onClick={handleCancel}
       />
-      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 slide-in-from-top-4 duration-300">
-        <div className="p-8">
-          <div className="flex items-start gap-6">
+      <div className="relative w-full max-w-sm bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden animate-in zoom-in-95 slide-in-from-top-4 duration-300">
+        <div className="p-6">
+          <div className="flex flex-col items-center text-center gap-4">
             <div className={cn(
-              "p-4 rounded-2xl shrink-0",
-              isDanger ? "bg-red-50 text-red-600" : "bg-blue-50 text-blue-600"
+              "w-14 h-14 rounded-full flex items-center justify-center shrink-0",
+              isDanger ? "bg-red-50 text-red-500" : "bg-blue-50 text-blue-500"
             )}>
-              {isDanger ? <Trash2 className="w-8 h-8" /> : <AlertCircle className="w-8 h-8" />}
+              {isDanger ? <Trash2 className="w-7 h-7" /> : <AlertCircle className="w-7 h-7" />}
             </div>
-            <div className="flex-1 space-y-2">
-              <h3 className="text-xl font-black text-slate-900 tracking-tight leading-tight">
+            <div className="space-y-1">
+              <h3 className="text-lg font-bold text-gray-900 tracking-tight">
                 {options.title}
               </h3>
-              <p className="text-sm text-slate-500 font-medium leading-relaxed">
+              <p className="text-sm text-gray-500 font-medium leading-relaxed">
                 {options.message}
               </p>
             </div>
           </div>
 
-          <div className="mt-10 flex gap-3">
+          <div className="mt-8 flex items-center justify-center gap-3 pt-4 border-t border-gray-50">
             <Button 
               variant="outline" 
               onClick={handleCancel}
-              className="flex-1 h-12 rounded-2xl border-slate-200 text-slate-600 font-bold hover:bg-slate-50"
+              className="flex-1"
             >
               {options.cancelText || "Cancel"}
             </Button>
             <Button 
+              variant={isDanger ? "danger" : "primary"}
               onClick={handleConfirm}
-              className={cn(
-                "flex-1 h-12 rounded-2xl font-bold shadow-lg shadow-opacity-20 transition-all active:scale-95",
-                isDanger 
-                  ? "bg-red-600 hover:bg-red-700 text-white shadow-red-200" 
-                  : "bg-slate-800 hover:bg-slate-900 text-white shadow-slate-200"
-              )}
+              className="flex-1"
             >
               {options.confirmText || (isDanger ? "Delete" : "Confirm")}
             </Button>
           </div>
         </div>
-        
-        <button 
-          onClick={handleCancel}
-          className="absolute top-4 right-4 p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-900 transition-all"
-        >
-          <X className="w-4 h-4" />
-        </button>
       </div>
     </div>
   );

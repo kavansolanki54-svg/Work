@@ -34,9 +34,9 @@ public class ClientMasterController : BaseApiController
     public async Task<IActionResult> GetById(int id)
     {
         var client = await _clientRepo.GetByIdAsync(id);
-        if (client == null) 
+        if (client == null)
             return NotFound(ApiResponse<ClientDTO>.ErrorResponse("Client not found"));
-        
+
         var dto = _mapper.Map<ClientDTO>(client);
         return Ok(ApiResponse<ClientDTO>.SuccessResponse(dto, "Client retrieved successfully"));
     }
@@ -66,11 +66,11 @@ public class ClientMasterController : BaseApiController
         if (!ModelState.IsValid) return ValidationErrorResponse();
 
         var client = await _clientRepo.GetByIdAsync(clientDTO.ClientId);
-        if (client == null) 
+        if (client == null)
             return NotFound(ApiResponse<ClientMaster>.ErrorResponse("Client not found"));
 
         _mapper.Map(clientDTO, client);
-        
+
         var userName = User.Identity?.Name ?? "Admin";
         client.ModifiedById = userName.Length > 20 ? userName.Substring(0, 20) : userName;
         client.ModifiedDate = DateTime.Now;
@@ -85,11 +85,11 @@ public class ClientMasterController : BaseApiController
     public async Task<IActionResult> Delete(int id)
     {
         var client = await _clientRepo.GetByIdAsync(id);
-        if (client == null) 
+        if (client == null)
             return NotFound(ApiResponse<ClientMaster>.ErrorResponse("Client not found"));
 
-        client.ActiveStatus = 0; // Soft delete pattern
-        
+        client.ActiveStatus = 0;
+
         var userName = User.Identity?.Name ?? "Admin";
         client.ModifiedById = userName.Length > 20 ? userName.Substring(0, 20) : userName;
         client.ModifiedDate = DateTime.Now;

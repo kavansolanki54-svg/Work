@@ -31,6 +31,8 @@ export interface WorkReport {
     works: WorkEntry[];
     createdAt: string;
     updatedAt?: string;
+    isEmailSent: boolean;
+    emailSentDate?: string;
 }
 
 export interface SaveReportDTO {
@@ -64,4 +66,10 @@ export const taskSheetService = {
     
     sendEmail: (id: number) =>
         api.post<ApiResponse<boolean>>(`/Reports/${id}/send-email`),
+    
+    previewEmail: (id: number) =>
+        api.get<ApiResponse<string>>(`/Reports/${id}/preview-email`),
+
+    updateBreakDuration: (employeeId: number, duration: number) =>
+        api.put<ApiResponse<boolean>>(`/EmployeeMaster/update-break-duration/${employeeId}/${duration}`),
 };

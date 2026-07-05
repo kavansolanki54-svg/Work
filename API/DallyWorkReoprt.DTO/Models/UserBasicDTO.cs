@@ -10,6 +10,7 @@ namespace DallyWorkReoprt.DTO.Models
         public int RoleId { get; set; }
         public int CompanyId { get; set; }
         public bool IsTenant { get; set; }
+        public int DefaultBreakDuration { get; set; }
     }
 }
 

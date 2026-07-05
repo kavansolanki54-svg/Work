@@ -22,6 +22,9 @@ public class WorkLogCreateDto
     [Required]
     public string Mode { get; set; } = null!;
     public int StatusId { get; set; }
+    public bool IsEmailSent { get; set; }
+    public DateTime? EmailSentDate { get; set; }
+    public string? StatusName { get; set; }
     public string? Remarks { get; set; }
     public string? OtherEmployeeIds { get; set; }
     public List<WorkLogTaskDto> Tasks { get; set; } = new();
@@ -51,6 +54,8 @@ public class WorkLogResponseDto
     public DateTime CreateDate { get; set; }
     public string? OtherEmployeeIds { get; set; }
     public int StatusId { get; set; }
+    public bool IsEmailSent { get; set; }
+    public DateTime? EmailSentDate { get; set; }
 
     public ClientDTO? Client { get; set; }
     public ProjectDTO? Project { get; set; }

@@ -1,9 +1,9 @@
+using AutoMapper;
 using DallyWorkReoprt.DAL.Interface;
 using DallyWorkReoprt.DAL.Models;
 using DallyWorkReoprt.DTO.Models;
 using DallyWorkReoprt.Models;
 using DallyWorkReoprt.Utilities.Helper;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -166,12 +166,34 @@ public class EmployeeMasterController : BaseApiController
             if (existing == null)
                 return NotFound(ApiResponse<string>.ErrorResponse("Employee not found"));
 
-            existing.ActiveStatus = 0; // Soft delete
+            existing.ActiveStatus = 0;
             existing.ModifiedById = User.Identity?.Name ?? "System";
             existing.ModifiedDate = DateTime.Now;
 
             await _repository.UpdateAsync(existing);
             return Ok(ApiResponse<bool>.SuccessResponse(true, "Employee deleted successfully"));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ApiResponse<string>.ErrorResponse(ex.Message));
+        }
+    }
+
+    [HttpPut("update-break-duration/{employeeId}/{duration}")]
+    public async Task<IActionResult> UpdateBreakDuration(int employeeId, int duration)
+    {
+        try
+        {
+            var existing = await _repository.GetByIdAsync(employeeId);
+            if (existing == null)
+                return NotFound(ApiResponse<string>.ErrorResponse("Employee not found"));
+
+            existing.DefaultBreakDuration = duration;
+            existing.ModifiedById = User.Identity?.Name ?? "System";
+            existing.ModifiedDate = DateTime.Now;
+
+            await _repository.UpdateAsync(existing);
+            return Ok(ApiResponse<bool>.SuccessResponse(true, "Break duration updated successfully"));
         }
         catch (Exception ex)
         {

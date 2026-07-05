@@ -18,8 +18,8 @@ public class EmailSettingsController : BaseApiController
     private readonly IMapper _mapper;
 
     public EmailSettingsController(
-        IEmailRecipientRepository recipientRepo, 
-        IEmailSettingRepository smtpRepo, 
+        IEmailRecipientRepository recipientRepo,
+        IEmailSettingRepository smtpRepo,
         IMapper mapper)
     {
         _recipientRepo = recipientRepo;
@@ -44,7 +44,7 @@ public class EmailSettingsController : BaseApiController
 
         var recipient = _mapper.Map<EmailRecipient>(recipientDTO);
         recipient.CreateDate = DateTime.Now;
-        
+
         await _recipientRepo.AddAsync(recipient);
         await _recipientRepo.SaveAsync();
 
@@ -55,7 +55,7 @@ public class EmailSettingsController : BaseApiController
     public async Task<IActionResult> DeleteRecipient(int id)
     {
         var recipient = await _recipientRepo.GetByIdAsync(id);
-        if (recipient == null) 
+        if (recipient == null)
             return NotFound(ApiResponse<EmailRecipient>.ErrorResponse("Recipient not found"));
 
         _recipientRepo.Remove(id);

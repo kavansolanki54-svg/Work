@@ -29,6 +29,7 @@ import { masterService } from "@/services/api/master.service";
 import { roleService, Role } from "@/services/api/role.service";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useConfirmStore } from "@/store/useConfirmStore";
+import { usePagePermissions } from "@/hooks/usePagePermissions";
 import { cn } from "@/utils/cn";
 import { toast } from "sonner";
 
@@ -58,6 +59,8 @@ export default function EmployeeMasterPage() {
   const queryClient = useQueryClient();
   const user = useAuthStore((state) => state.user);
   const companyId = user?.companyId || 1;
+
+  const { canCreate, canEdit, canDelete } = usePagePermissions("employeemaster");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
@@ -258,18 +261,22 @@ export default function EmployeeMasterPage() {
       header: "Actions",
       accessor: (item: Employee) => (
         <div className="flex items-center gap-2 group-hover:opacity-100 transition-opacity">
-          <button 
-            onClick={() => handleEdit(item)}
-            className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-primary transition-colors"
-          >
-            <Edit className="w-4 h-4" />
-          </button>
-          <button 
-            onClick={() => handleDelete(item.employeeId)}
-            className="p-2 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-500 transition-colors"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
+          {canEdit && (
+            <button 
+              onClick={() => handleEdit(item)}
+              className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-primary transition-colors"
+            >
+              <Edit className="w-4 h-4" />
+            </button>
+          )}
+          {canDelete && (
+            <button 
+              onClick={() => handleDelete(item.employeeId)}
+              className="p-2 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-500 transition-colors"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          )}
         </div>
       )
     }
@@ -286,10 +293,12 @@ export default function EmployeeMasterPage() {
           <p className="text-gray-500 mt-1 font-medium">Manage your team members and their roles.</p>
         </div>
         
-        <Button onClick={handleOpenAdd} className="gap-2 px-6 shadow-xl shadow-primary/20">
-          <UserPlus className="w-5 h-5" />
-          Add Team Member
-        </Button>
+        {canCreate && (
+          <Button onClick={handleOpenAdd} className="gap-2 px-6 shadow-xl shadow-primary/20">
+            <UserPlus className="w-5 h-5" />
+            Add Team Member
+          </Button>
+        )}
       </div>
 
       <div className="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
@@ -330,46 +339,52 @@ export default function EmployeeMasterPage() {
         onClose={() => setIsModalOpen(false)} 
         title={editingEmployee ? "Update Employee Details" : "Onboard New Team Member"}
         size="xl"
+        footer={(
+          <>
+            <Button variant="outline" type="button" onClick={() => setIsModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="submit" form="employee-form" isLoading={mutation.isPending}>
+              {editingEmployee ? "Update Details" : "Onboard Member"}
+            </Button>
+          </>
+        )}
       >
-        <form onSubmit={handleSubmit((data) => mutation.mutate(data))} className="space-y-4">
-          <div className="bg-gray-50/50 p-3 rounded-xl border border-gray-100 space-y-3">
-             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
-                <div className="md:col-span-3">
-                    <Input
-                        {...register("employeeCode")}
-                        label="Code"
-                        placeholder="101"
-                        error={errors.employeeCode?.message}
-                    />
-                </div>
-                <div className="md:col-span-3">
-                     <Input
-                        {...register("firstName")}
-                        label="First Name"
-                        placeholder="John"
-                        error={errors.firstName?.message}
-                    />
-                </div>
-                <div className="md:col-span-3">
-                     <Input
-                        {...register("middleName")}
-                        label="Middle"
-                        placeholder="M."
-                        error={errors.middleName?.message}
-                    />
-                </div>
-                <div className="md:col-span-3">
-                     <Input
-                        {...register("lastName")}
-                        label="Last Name"
-                        placeholder="Doe"
-                        error={errors.lastName?.message}
-                    />
-                </div>
+        <form 
+          id="employee-form"
+          onSubmit={handleSubmit((data) => mutation.mutate(data))} 
+          className="space-y-6"
+        >
+          <div className="bg-gray-50/50 p-4 rounded-xl border border-gray-100">
+             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-start">
+                <Input
+                  {...register("employeeCode")}
+                  label="Emp Code"
+                  placeholder="101"
+                  error={errors.employeeCode?.message}
+                />
+                <Input
+                  {...register("firstName")}
+                  label="First Name"
+                  placeholder="John"
+                  error={errors.firstName?.message}
+                />
+                <Input
+                  {...register("middleName")}
+                  label="Middle"
+                  placeholder="M."
+                  error={errors.middleName?.message}
+                />
+                <Input
+                  {...register("lastName")}
+                  label="Last Name"
+                  placeholder="Doe"
+                  error={errors.lastName?.message}
+                />
              </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Input
                 {...register("email")}
                 label="Email Address"
@@ -387,7 +402,7 @@ export default function EmployeeMasterPage() {
               />
                <Input
                 {...register("passwords")}
-                label="Security Password"
+                label="Password"
                 type="password"
                 placeholder="••••••••"
                 error={errors.passwords?.message}
@@ -395,54 +410,45 @@ export default function EmployeeMasterPage() {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Access Role</label>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1 mb-1.5 block">Access Role</label>
                 <div className="relative flex items-center group">
                     <Shield className="absolute left-3 w-4 h-4 text-gray-400" />
                     <select 
                         {...register("roleMasterId")}
-                        className="w-full px-4 pl-10 py-2 bg-gray-50 border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm font-medium transition-all"
+                        className="w-full px-4 pl-10 py-[11px] bg-white border border-slate-200 rounded-lg outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-sm"
                     >
                         {roles.map((r: Role) => <option key={r.roleMasterId} value={r.roleMasterId}>{r.roleName}</option>)}
                     </select>
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Gender Identity</label>
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1 mb-1.5 block">Gender</label>
                 <div className="relative flex items-center group">
                     <UserCircle className="absolute left-3 w-4 h-4 text-gray-400" />
                     <select 
                         {...register("genderId")}
-                        className="w-full px-4 pl-10 py-2 bg-gray-50 border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm font-medium transition-all"
+                        className="w-full px-4 pl-10 py-[11px] bg-white border border-slate-200 rounded-lg outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-sm"
                     >
                         {genders.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
                     </select>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between p-2.5 bg-gray-50/50 rounded-xl border border-dashed border-gray-200 h-[58px] mt-4">
+              <div className="flex items-center justify-between px-4 py-2.5 bg-slate-50 rounded-lg border border-slate-200">
                  <div className="flex flex-col">
-                    <span className="text-[10px] font-bold text-gray-700 leading-none">ALLOW LOGIN</span>
-                    <span className="text-[8px] text-gray-400 leading-none mt-0.5">App access</span>
+                    <span className="text-[11px] font-bold text-slate-600 leading-none uppercase tracking-wider">Allow Login</span>
                  </div>
-                 <label className="relative inline-flex items-center cursor-pointer scale-90">
+                 <label className="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" {...register("isAllowLogin")} className="sr-only peer" />
-                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                  </label>
               </div>
           </div>
-
-          <div className="pt-4 flex items-center justify-end gap-3 border-t border-gray-50">
-             <Button variant="outline" type="button" onClick={() => setIsModalOpen(false)} className="px-6 h-9 text-xs">Cancel</Button>
-             <Button type="submit" isLoading={mutation.isPending} className="px-8 h-9 text-xs shadow-md">
-                {editingEmployee ? "Update Personnel" : "Onboard Member"}
-             </Button>
-          </div>
         </form>
       </Modal>
-
     </div>
   );
 }
