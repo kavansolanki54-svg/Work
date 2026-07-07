@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Callyzer.App.ViewModels"
+    x:Class="Callyzer.App.Pages.LoginPage"
+    x:DataType="vm:LoginViewModel"
+    Shell.NavBarIsVisible="False"
+    Title="{Binding Title}">
+
+    <Grid BackgroundColor="{StaticResource BackgroundColor}">
+        <ScrollView VerticalOptions="Center">
+            <VerticalStackLayout Spacing="20" Padding="32" MaximumWidthRequest="400" HorizontalOptions="Center">
+
+                <!-- Logo / App Name -->
+                <Label Text="📊" FontSize="64" HorizontalTextAlignment="Center" Margin="0,0,0,8" />
+                <Label Text="Callyzer" Style="{StaticResource Headline}" HorizontalTextAlignment="Center" />
+                <Label Text="Call Analytics &amp; Insights" Style="{StaticResource Subtitle}" HorizontalTextAlignment="Center" />
+
+                <!-- Email -->
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Email" Style="{StaticResource Caption}" />
+                    <Entry Placeholder="Enter your email"
+                           Text="{Binding Email}"
+                           Keyboard="Email"
+                           ReturnType="Next" />
+                </VerticalStackLayout>
+
+                <!-- Password -->
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Password" Style="{StaticResource Caption}" />
+                    <Entry Placeholder="Enter your password"
+                           Text="{Binding Password}"
+                           IsPassword="{Binding IsPasswordVisible, Converter={StaticResource BoolToColorConverter}}"
+                           ReturnType="Done" />
+                </VerticalStackLayout>
+
+                <!-- Error Message -->
+                <Label Text="{Binding ErrorMessage}"
+                       TextColor="{StaticResource ErrorColor}"
+                       IsVisible="{Binding HasError}"
+                       Style="{StaticResource Caption}" />
+
+                <!-- Login Button -->
+                <Button Text="Sign In"
+                        Style="{StaticResource PrimaryButton}"
+                        Command="{Binding LoginCommand}" />
+
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                                   HorizontalOptions="Center" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+
+</ContentPage>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Callyzer.App.ViewModels"
+    xmlns:skia="clr-namespace:SkiaSharp.Views.Maui.Controls;assembly=SkiaSharp.Views.Maui.Controls"
+    xmlns:microcharts="clr-namespace:Microcharts.Maui;assembly=Microcharts.Maui"
+    xmlns:controls="clr-namespace:Callyzer.App.Controls"
+    x:Class="Callyzer.App.Pages.AnalyticsPage"
+    x:DataType="vm:AnalyticsViewModel"
+    Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="16" Padding="16">
+
+            <!-- ═══════════ Period Selector ═══════════ -->
+            <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="8">
+                <Button Grid.Column="0" Text="Day" Style="{StaticResource SecondaryButton}"
+                        Command="{Binding ChangePeriodCommand}" CommandParameter="Daily"
+                        HeightRequest="40" FontSize="14" />
+                <Button Grid.Column="1" Text="Week" Style="{StaticResource SecondaryButton}"
+                        Command="{Binding ChangePeriodCommand}" CommandParameter="Weekly"
+                        HeightRequest="40" FontSize="14" />
+                <Button Grid.Column="2" Text="Month" Style="{StaticResource SecondaryButton}"
+                        Command="{Binding ChangePeriodCommand}" CommandParameter="Monthly"
+                        HeightRequest="40" FontSize="14" />
+                <Button Grid.Column="3" Text="Custom" Style="{StaticResource SecondaryButton}"
+                        Command="{Binding ChangePeriodCommand}" CommandParameter="Custom"
+                        HeightRequest="40" FontSize="14" />
+            </Grid>
+
+            <Label Text="{Binding Summary.PeriodLabel}" Style="{StaticResource Subtitle}" />
+
+            <!-- ═══════════ Call Type Chart ═══════════ -->
+            <Frame Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Call Distribution" Style="{StaticResource Title}" FontSize="18" />
+                    <microcharts:ChartView Chart="{Binding CallTypeChart}"
+                                           HeightRequest="220"
+                                           HorizontalOptions="Fill" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- ═══════════ Summary Stats Grid ═══════════ -->
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" RowSpacing="12" ColumnSpacing="12">
+                <controls:StatCard Grid.Row="0" Grid.Column="0" 
+                                   Title="Total Duration" 
+                                   Value="{Binding Summary.TotalDuration, Converter={StaticResource DurationConverter}}" />
+                
+                <controls:StatCard Grid.Row="0" Grid.Column="1" 
+                                   Title="Avg Duration" 
+                                   StringFormat="{}{0:F0}s"
+                                   TargetNumericValue="{Binding Summary.AverageDuration}" />
+                
+                <controls:StatCard Grid.Row="1" Grid.Column="0" 
+                                   Title="Unique Contacts" 
+                                   TargetNumericValue="{Binding Summary.UniqueContacts}" />
+                
+                <controls:StatCard Grid.Row="1" Grid.Column="1" 
+                                   Title="Answer Rate" 
+                                   StringFormat="{}{0:F1}%"
+                                   TargetNumericValue="{Binding Summary.AnswerRate}"
+                                   ValueColor="{StaticResource SuccessColor}" />
+            </Grid>
+
+            <!-- ═══════════ Peak Hours Chart ═══════════ -->
+            <Frame Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Peak Hours" Style="{StaticResource Title}" FontSize="18" />
+                    <microcharts:ChartView Chart="{Binding HourlyChart}"
+                                           HeightRequest="200"
+                                           HorizontalOptions="Fill" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- ═══════════ Duration Distribution Chart ═══════════ -->
+            <Frame Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Call Duration Breakdown" Style="{StaticResource Title}" FontSize="18" />
+                    <microcharts:ChartView Chart="{Binding DurationChart}"
+                                           HeightRequest="200"
+                                           HorizontalOptions="Fill" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- ═══════════ Top Contacts ═══════════ -->
+            <Label Text="Top Contacts" Style="{StaticResource Title}" />
+            <CollectionView ItemsSource="{Binding TopContacts}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="x:Object">
+                        <Frame Style="{StaticResource Card}" Padding="12" Margin="0,4">
+                            <Grid ColumnDefinitions="32,*,80,80" ColumnSpacing="12">
+                                <Label Grid.Column="0" Text="{Binding Rank, StringFormat='#{0}'}"
+                                       Style="{StaticResource Body}" FontAttributes="Bold"
+                                       TextColor="{StaticResource PrimaryColor}" VerticalOptions="Center" />
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                    <Label Text="{Binding ContactName}" Style="{StaticResource Body}"
+                                           LineBreakMode="TailTruncation" />
+                                    <Label Text="{Binding PhoneNumber}" Style="{StaticResource Caption}" />
+                                </VerticalStackLayout>
+                                <Label Grid.Column="2" Text="{Binding TotalCalls, StringFormat='{0} calls'}"
+                                       Style="{StaticResource Caption}" VerticalOptions="Center" />
+                                <Label Grid.Column="3" Text="{Binding TotalDuration, Converter={StaticResource DurationConverter}}"
+                                       Style="{StaticResource Caption}" VerticalOptions="Center" />
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                               HorizontalOptions="Center" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

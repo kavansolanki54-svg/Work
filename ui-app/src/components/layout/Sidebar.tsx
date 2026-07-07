@@ -9,7 +9,9 @@ import {
   LogOut,
   Layers,
   LayoutDashboard,
-  PhoneCall
+  PhoneCall,
+  Activity,
+  FileText
 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -173,6 +175,97 @@ export const Sidebar = () => {
                 pathname === "/calllogs" ? "font-bold" : "font-medium"
               )}>
                 Call Logs
+              </span>
+            </div>
+          </Link>
+          
+          <Link
+            href="/callanalytics"
+            className={cn(
+              "w-full px-3 py-2 flex items-center justify-between rounded-lg transition-colors cursor-pointer group mb-1",
+              pathname === "/callanalytics" ? "bg-primary/5 text-primary" : "text-slate-600 hover:bg-slate-50"
+            )}
+          >
+            <div className="flex items-center gap-3">
+              <div className={cn(
+                "transition-colors",
+                pathname === "/callanalytics" ? "text-primary" : "text-slate-400 group-hover:text-primary"
+              )}>
+                <Layers className="w-4 h-4" />
+              </div>
+              <span className={cn(
+                "tracking-tight text-sm",
+                pathname === "/callanalytics" ? "font-bold" : "font-medium"
+              )}>
+                Call Analytics
+              </span>
+            </div>
+          </Link>
+
+          <Link
+            href="/devicemanagement"
+            className={cn(
+              "w-full px-3 py-2 flex items-center justify-between rounded-lg transition-colors cursor-pointer group mb-1",
+              pathname === "/devicemanagement" ? "bg-primary/5 text-primary" : "text-slate-600 hover:bg-slate-50"
+            )}
+          >
+            <div className="flex items-center gap-3">
+              <div className={cn(
+                "transition-colors",
+                pathname === "/devicemanagement" ? "text-primary" : "text-slate-400 group-hover:text-primary"
+              )}>
+                <LayoutDashboard className="w-4 h-4" />
+              </div>
+              <span className={cn(
+                "tracking-tight text-sm",
+                pathname === "/devicemanagement" ? "font-bold" : "font-medium"
+              )}>
+                Device Management
+              </span>
+            </div>
+          </Link>
+          <Link
+            href="/sync-monitor"
+            className={cn(
+              "w-full px-3 py-2 flex items-center justify-between rounded-lg transition-colors cursor-pointer group mb-1",
+              pathname === "/sync-monitor" ? "bg-primary/5 text-primary" : "text-slate-600 hover:bg-slate-50"
+            )}
+          >
+            <div className="flex items-center gap-3">
+              <div className={cn(
+                "transition-colors",
+                pathname === "/sync-monitor" ? "text-primary" : "text-slate-400 group-hover:text-primary"
+              )}>
+                <Activity className="w-4 h-4" />
+              </div>
+              <span className={cn(
+                "tracking-tight text-sm",
+                pathname === "/sync-monitor" ? "font-bold" : "font-medium"
+              )}>
+                Sync Monitor
+              </span>
+            </div>
+          </Link>
+
+          <Link
+            href="/reports"
+            className={cn(
+              "w-full px-3 py-2 flex items-center justify-between rounded-lg transition-colors cursor-pointer group mb-1",
+              pathname === "/reports" ? "bg-primary/5 text-primary" : "text-slate-600 hover:bg-slate-50"
+            )}
+          >
+            <div className="flex items-center gap-3">
+              <div className={cn(
+                "transition-colors",
+                pathname === "/reports" ? "text-primary" : "text-slate-400 group-hover:text-primary"
+              )}>
+                <FileText className="w-4 h-4" />
+              </div>
+              <span className={cn(
+                "tracking-tight text-sm",
+                pathname === "/reports" ? "font-bold" : "font-medium"
+              )}>
+                Reports
               </span>
             </div>
           </Link>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Callyzer.App.ViewModels"
+    x:Class="Callyzer.App.Pages.DashboardPage"
+    x:DataType="vm:DashboardViewModel"
+    Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="16" Padding="16">
+
+            <!-- ═══════════ Permission Banner ═══════════ -->
+            <Frame Style="{StaticResource Card}"
+                   IsVisible="{Binding HasPermissions, Converter={StaticResource BoolToColorConverter}}"
+                   BackgroundColor="{StaticResource SurfaceVariantColor}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="📱 Permission Required"
+                           Style="{StaticResource Title}" />
+                    <Label Text="Grant call log access to start analyzing your calls."
+                           Style="{StaticResource Subtitle}" />
+                    <Button Text="Grant Permission"
+                            Style="{StaticResource PrimaryButton}"
+                            Command="{Binding RequestPermissionsCommand}" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- ═══════════ Today's Summary ═══════════ -->
+            <Label Text="Today" Style="{StaticResource Title}" />
+            <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="12">
+                <!-- Total Calls -->
+                <Frame Grid.Column="0" Style="{StaticResource Card}" Padding="12">
+                    <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                        <Label Text="{Binding TodaySummary.TotalCalls}"
+                               Style="{StaticResource StatValue}" HorizontalTextAlignment="Center" />
+                        <Label Text="TOTAL" Style="{StaticResource StatLabel}" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Incoming -->
+                <Frame Grid.Column="1" Style="{StaticResource Card}" Padding="12">
+                    <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                        <Label Text="{Binding TodaySummary.IncomingCalls}"
+                               FontSize="32" FontAttributes="Bold"
+                               TextColor="{StaticResource IncomingColor}"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="IN" Style="{StaticResource StatLabel}" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Outgoing -->
+                <Frame Grid.Column="2" Style="{StaticResource Card}" Padding="12">
+                    <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                        <Label Text="{Binding TodaySummary.OutgoingCalls}"
+                               FontSize="32" FontAttributes="Bold"
+                               TextColor="{StaticResource OutgoingColor}"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="OUT" Style="{StaticResource StatLabel}" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Missed -->
+                <Frame Grid.Column="3" Style="{StaticResource Card}" Padding="12">
+                    <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                        <Label Text="{Binding TodaySummary.MissedCalls}"
+                               FontSize="32" FontAttributes="Bold"
+                               TextColor="{StaticResource MissedColor}"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="MISSED" Style="{StaticResource StatLabel}" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Frame>
+            </Grid>
+
+            <!-- ═══════════ Duration Card ═══════════ -->
+            <Frame Style="{StaticResource Card}">
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" RowSpacing="8" ColumnSpacing="16">
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label Text="{Binding TodaySummary.TotalDuration, Converter={StaticResource DurationConverter}}"
+                               Style="{StaticResource StatValue}" FontSize="24" />
+                        <Label Text="Total Duration" Style="{StaticResource Caption}" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="{Binding TodaySummary.UniqueContacts}"
+                               Style="{StaticResource StatValue}" FontSize="24" />
+                        <Label Text="Unique Contacts" Style="{StaticResource Caption}" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Frame>
+
+            <!-- ═══════════ Top Contacts ═══════════ -->
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="Top Contacts This Week" Style="{StaticResource Title}" />
+                <Label Grid.Column="1" Text="See All →"
+                       Style="{StaticResource Caption}"
+                       TextColor="{StaticResource PrimaryColor}">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NavigateToAnalyticsCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+            </Grid>
+
+            <CollectionView ItemsSource="{Binding TopContacts}"
+                            SelectionMode="Single"
+                            SelectionChangedCommand="{Binding NavigateToContactDetailCommand}"
+                            SelectionChangedCommandParameter="{Binding Source={RelativeSource Self}, Path=SelectedItem}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="x:Object">
+                        <Frame Style="{StaticResource Card}" Padding="12" Margin="0,4">
+                            <Grid ColumnDefinitions="48,*,Auto" ColumnSpacing="12">
+                                <!-- Avatar -->
+                                <Frame Grid.Column="0" BackgroundColor="{StaticResource PrimaryColor}"
+                                       WidthRequest="48" HeightRequest="48" CornerRadius="24"
+                                       Padding="0" HasShadow="False">
+                                    <Label Text="{Binding Rank}" FontSize="18" FontAttributes="Bold"
+                                           TextColor="White" HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Frame>
+
+                                <!-- Name & Number -->
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                    <Label Text="{Binding ContactName}" Style="{StaticResource Body}" FontAttributes="Bold"
+                                           LineBreakMode="TailTruncation" />
+                                    <Label Text="{Binding PhoneNumber}" Style="{StaticResource Caption}" />
+                                </VerticalStackLayout>
+
+                                <!-- Call Count -->
+                                <Label Grid.Column="2" Text="{Binding TotalCalls, StringFormat='{0} calls'}"
+                                       Style="{StaticResource Caption}" TextColor="{StaticResource PrimaryColor}"
+                                       VerticalOptions="Center" />
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="8" Padding="32">
+                        <Label Text="📊" FontSize="48" HorizontalTextAlignment="Center" />
+                        <Label Text="No call data yet" Style="{StaticResource Subtitle}" HorizontalTextAlignment="Center" />
+                        <Label Text="Your top contacts will appear here after calls are captured."
+                               Style="{StaticResource Caption}" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+            </CollectionView>
+
+            <!-- ═══════════ Loading Indicator ═══════════ -->
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                               HorizontalOptions="Center" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="xunit" Version="2.5.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector" Version="6.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Include the source files directly to avoid MAUI cross-compilation issues -->
+    <Compile Include="..\Callyzer.App\Models\**\*.cs" LinkBase="App\Models" />
+    <Compile Include="..\Callyzer.App\Repositories\**\*.cs" LinkBase="App\Repositories" />
+    <Compile Include="..\Callyzer.App\Interfaces\**\*.cs" LinkBase="App\Interfaces" />
+    <Compile Include="..\Callyzer.App\Enums\**\*.cs" LinkBase="App\Enums" />
+    <Compile Include="..\Callyzer.App\Exceptions\**\*.cs" LinkBase="App\Exceptions" />
+    <Compile Include="..\Callyzer.App\Helpers\**\*.cs" LinkBase="App\Helpers" />
+    <Compile Include="..\Callyzer.App\SQLite\DatabaseService.cs" LinkBase="App\SQLite" />
+    <Compile Include="..\Callyzer.App\Constants\AppConstants.cs" LinkBase="App\Constants" />
+    
+    <!-- Exclude Maui specific services that depend on Android/iOS -->
+    <Compile Remove="..\Callyzer.App\Interfaces\ICoreServices.cs" />
+    <Compile Remove="..\Callyzer.App\Interfaces\IPlatformService.cs" />
+    <Compile Remove="..\Callyzer.App\Interfaces\ICallLogPlatformService.cs" />
+  </ItemGroup>
+
+</Project>

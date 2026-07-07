@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Callyzer.App.ViewModels"
+    x:Class="Callyzer.App.Pages.SplashPage"
+    x:DataType="vm:SplashViewModel"
+    BackgroundColor="{StaticResource BackgroundColor}">
+
+    <Grid>
+        <!-- Background decorative elements -->
+        <Ellipse Fill="{StaticResource SurfaceVariantColor}" WidthRequest="300" HeightRequest="300" 
+                 HorizontalOptions="Start" VerticalOptions="Start" TranslationX="-100" TranslationY="-100" Opacity="0.5" />
+        <Ellipse Fill="{StaticResource CardColor}" WidthRequest="400" HeightRequest="400" 
+                 HorizontalOptions="End" VerticalOptions="End" TranslationX="150" TranslationY="150" Opacity="0.3" />
+
+        <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="24" Padding="32">
+            
+            <!-- Animated Logo -->
+            <VerticalStackLayout x:Name="LogoContainer" Spacing="8" Opacity="0" Scale="0.8">
+                <Label Text="📊" FontSize="80" HorizontalTextAlignment="Center" />
+                <Label Text="Callyzer" Style="{StaticResource Headline}" HorizontalTextAlignment="Center" FontSize="36" />
+                <Label Text="Call Analytics &amp; Insights" Style="{StaticResource Subtitle}" HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+
+            <!-- Loading Status -->
+            <VerticalStackLayout Spacing="16" Margin="0,32,0,0" IsVisible="{Binding IsPermissionContainerVisible, Converter={StaticResource BoolToColorConverter}, ConverterParameter=invert}">
+                <ActivityIndicator IsRunning="True" Color="{StaticResource PrimaryColor}" HorizontalOptions="Center" />
+                <Label Text="{Binding StatusMessage}" Style="{StaticResource Caption}" HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+
+            <!-- Permissions Container -->
+            <Frame Style="{StaticResource Card}" IsVisible="{Binding IsPermissionContainerVisible}"
+                   Margin="0,32,0,0" BackgroundColor="{StaticResource SurfaceColor}">
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="📱 Permissions Required" Style="{StaticResource Title}" HorizontalTextAlignment="Center" />
+                    <Label Text="{Binding StatusMessage}" Style="{StaticResource Body}" HorizontalTextAlignment="Center" />
+                    <Button Text="Grant Permission" Style="{StaticResource PrimaryButton}"
+                            Command="{Binding GrantPermissionsCommand}" />
+                </VerticalStackLayout>
+            </Frame>
+
+        </VerticalStackLayout>
+    </Grid>
+
+</ContentPage>

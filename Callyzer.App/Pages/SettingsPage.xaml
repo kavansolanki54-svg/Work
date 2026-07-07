@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Callyzer.App.ViewModels"
+    x:Class="Callyzer.App.Pages.SettingsPage"
+    x:DataType="vm:SettingsViewModel"
+    Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="16" Padding="16">
+
+            <!-- User Info -->
+            <Frame Style="{StaticResource Card}">
+                <Grid ColumnDefinitions="48,*" ColumnSpacing="12">
+                    <Frame Grid.Column="0" BackgroundColor="{StaticResource PrimaryColor}"
+                           WidthRequest="48" HeightRequest="48" CornerRadius="24"
+                           Padding="0" HasShadow="False">
+                        <Label Text="👤" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Frame>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                        <Label Text="{Binding UserName}" Style="{StaticResource Body}" FontAttributes="Bold" />
+                        <Label Text="{Binding Email}" Style="{StaticResource Caption}" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Frame>
+
+            <!-- Sync Settings -->
+            <Label Text="SYNC" Style="{StaticResource StatLabel}" Margin="0,8,0,0" />
+
+            <Frame Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="16">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Background Sync" Style="{StaticResource Body}" VerticalOptions="Center" />
+                        <Switch Grid.Column="1" IsToggled="{Binding BackgroundSyncEnabled}"
+                                OnColor="{StaticResource PrimaryColor}" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Wi-Fi Only" Style="{StaticResource Body}" VerticalOptions="Center" />
+                        <Switch Grid.Column="1" IsToggled="{Binding WifiOnlySync}"
+                                OnColor="{StaticResource PrimaryColor}" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Sync Interval" Style="{StaticResource Body}" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="{Binding SyncIntervalMinutes, StringFormat='{0} min'}"
+                               Style="{StaticResource Body}" TextColor="{StaticResource PrimaryColor}" />
+                    </Grid>
+                    <BoxView HeightRequest="1" Color="{StaticResource BorderColor}" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="View Sync History" Style="{StaticResource Body}" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="→" Style="{StaticResource Body}" TextColor="{StaticResource PrimaryColor}" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding NavigateToSyncHistoryCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Appearance -->
+            <Label Text="APPEARANCE" Style="{StaticResource StatLabel}" Margin="0,8,0,0" />
+
+            <Frame Style="{StaticResource Card}">
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="Dark Mode" Style="{StaticResource Body}" VerticalOptions="Center" />
+                    <Switch Grid.Column="1" IsToggled="{Binding DarkModeEnabled}"
+                            OnColor="{StaticResource PrimaryColor}" />
+                </Grid>
+            </Frame>
+
+            <!-- Notifications -->
+            <Label Text="NOTIFICATIONS" Style="{StaticResource StatLabel}" Margin="0,8,0,0" />
+
+            <Frame Style="{StaticResource Card}">
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="Push Notifications" Style="{StaticResource Body}" VerticalOptions="Center" />
+                    <Switch Grid.Column="1" IsToggled="{Binding NotificationsEnabled}"
+                            OnColor="{StaticResource PrimaryColor}" />
+                </Grid>
+            </Frame>
+
+            <!-- Data Management -->
+            <Label Text="DATA" Style="{StaticResource StatLabel}" Margin="0,8,0,0" />
+
+            <Frame Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="16">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Export Data" Style="{StaticResource Body}" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="→" Style="{StaticResource Body}" TextColor="{StaticResource PrimaryColor}" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding NavigateToExportCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                    <BoxView HeightRequest="1" Color="{StaticResource BorderColor}" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Backup &amp; Restore" Style="{StaticResource Body}" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="→" Style="{StaticResource Body}" TextColor="{StaticResource PrimaryColor}" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding NavigateToBackupCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Actions -->
+            <Button Text="Save Settings" Style="{StaticResource PrimaryButton}"
+                    Command="{Binding SaveSettingsCommand}" Margin="0,8,0,0" />
+
+            <Button Text="Logout" Style="{StaticResource SecondaryButton}"
+                    TextColor="{StaticResource ErrorColor}"
+                    BorderColor="{StaticResource ErrorColor}"
+                    Command="{Binding LogoutCommand}" />
+
+            <!-- App Info -->
+            <Label Text="Callyzer v1.0.0" Style="{StaticResource Caption}"
+                   HorizontalTextAlignment="Center" Margin="0,16,0,0" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

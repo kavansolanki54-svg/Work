@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Callyzer.App.ViewModels"
+    x:Class="Callyzer.App.Pages.ExportPage"
+    x:DataType="vm:ExportViewModel"
+    Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="24" Padding="16">
+
+            <!-- Export Type -->
+            <Frame Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="1. Select Format" Style="{StaticResource Title}" />
+                    
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
+                        <Button Grid.Column="0" Text="CSV Data" 
+                                Style="{Binding CsvButtonStyle}"
+                                Command="{Binding SelectFormatCommand}" CommandParameter="CSV" />
+                                
+                        <Button Grid.Column="1" Text="PDF Report" 
+                                Style="{Binding PdfButtonStyle}"
+                                Command="{Binding SelectFormatCommand}" CommandParameter="PDF" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Date Range -->
+            <Frame Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="2. Select Range" Style="{StaticResource Title}" />
+                    
+                    <VerticalStackLayout Spacing="8">
+                        <Button Text="Last 7 Days" 
+                                Style="{Binding WeekButtonStyle}"
+                                Command="{Binding SelectRangeCommand}" CommandParameter="7" />
+                                
+                        <Button Text="Last 30 Days" 
+                                Style="{Binding MonthButtonStyle}"
+                                Command="{Binding SelectRangeCommand}" CommandParameter="30" />
+                                
+                        <Button Text="All Time" 
+                                Style="{Binding AllTimeButtonStyle}"
+                                Command="{Binding SelectRangeCommand}" CommandParameter="0" />
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Frame>
+            
+            <Label Text="Generates an offline file securely on your device." 
+                   Style="{StaticResource Caption}" HorizontalTextAlignment="Center" Margin="0,16,0,0"/>
+
+            <Button Text="Generate &amp; Share" 
+                    Style="{StaticResource PrimaryButton}" 
+                    Command="{Binding ExportCommand}"
+                    Margin="0,8" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HorizontalOptions="Center" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

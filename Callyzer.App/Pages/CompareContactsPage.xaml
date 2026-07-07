@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Callyzer.App.ViewModels"
+    xmlns:controls="clr-namespace:Callyzer.App.Controls"
+    xmlns:microcharts="clr-namespace:Microcharts.Maui;assembly=Microcharts.Maui"
+    x:Class="Callyzer.App.Pages.CompareContactsPage"
+    x:DataType="vm:CompareContactsViewModel"
+    Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="16" Padding="16">
+
+            <!-- VS Header -->
+            <Grid ColumnDefinitions="*,Auto,*" ColumnSpacing="16" HorizontalOptions="Fill">
+                <!-- Contact 1 -->
+                <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center" Spacing="8">
+                    <controls:ContactAvatar ContactName="{Binding Contact1Name}" Size="60" />
+                    <Label Text="{Binding Contact1Name}" Style="{StaticResource Body}" 
+                           HorizontalTextAlignment="Center" LineBreakMode="TailTruncation" />
+                </VerticalStackLayout>
+                
+                <Label Grid.Column="1" Text="VS" Style="{StaticResource Title}" 
+                       TextColor="{StaticResource PrimaryColor}" 
+                       VerticalOptions="Center" />
+                       
+                <!-- Contact 2 -->
+                <VerticalStackLayout Grid.Column="2" HorizontalOptions="Center" Spacing="8">
+                    <controls:ContactAvatar ContactName="{Binding Contact2Name}" Size="60" />
+                    <Label Text="{Binding Contact2Name}" Style="{StaticResource Body}" 
+                           HorizontalTextAlignment="Center" LineBreakMode="TailTruncation" />
+                </VerticalStackLayout>
+            </Grid>
+
+            <!-- Input for Contact 2 if not selected -->
+            <Frame Style="{StaticResource Card}" IsVisible="{Binding IsContact2Empty}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Select Second Contact" Style="{StaticResource Title}" />
+                    <Entry Placeholder="Enter phone number..." Text="{Binding Contact2Input}" />
+                    <Button Text="Compare" Style="{StaticResource PrimaryButton}" Command="{Binding CompareCommand}" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <VerticalStackLayout IsVisible="{Binding HasResults}" Spacing="16">
+                <!-- Comparison Chart -->
+                <Frame Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Total Calls" Style="{StaticResource Title}" FontSize="18" />
+                        <microcharts:ChartView Chart="{Binding CallsChart}" HeightRequest="150" />
+                    </VerticalStackLayout>
+                </Frame>
+                
+                <Frame Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Total Duration" Style="{StaticResource Title}" FontSize="18" />
+                        <microcharts:ChartView Chart="{Binding DurationChart}" HeightRequest="150" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Detailed Breakdown -->
+                <Label Text="Detailed Breakdown" Style="{StaticResource Title}" Margin="0,8,0,0" />
+                <Grid ColumnDefinitions="*,Auto,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="12">
+                    <!-- Row 1: Incoming -->
+                    <Label Grid.Row="0" Grid.Column="0" Text="{Binding Result.Contacts[0].IncomingCalls}" HorizontalTextAlignment="Center" Style="{StaticResource StatValue}" FontSize="20" />
+                    <Label Grid.Row="0" Grid.Column="1" Text="Incoming Calls" Style="{StaticResource Body}" VerticalOptions="Center" />
+                    <Label Grid.Row="0" Grid.Column="2" Text="{Binding Result.Contacts[1].IncomingCalls}" HorizontalTextAlignment="Center" Style="{StaticResource StatValue}" FontSize="20" />
+                    
+                    <!-- Row 2: Outgoing -->
+                    <Label Grid.Row="1" Grid.Column="0" Text="{Binding Result.Contacts[0].OutgoingCalls}" HorizontalTextAlignment="Center" Style="{StaticResource StatValue}" FontSize="20" />
+                    <Label Grid.Row="1" Grid.Column="1" Text="Outgoing Calls" Style="{StaticResource Body}" VerticalOptions="Center" />
+                    <Label Grid.Row="1" Grid.Column="2" Text="{Binding Result.Contacts[1].OutgoingCalls}" HorizontalTextAlignment="Center" Style="{StaticResource StatValue}" FontSize="20" />
+                    
+                    <!-- Row 3: Avg Duration -->
+                    <Label Grid.Row="2" Grid.Column="0" Text="{Binding Result.Contacts[0].AverageDuration, StringFormat='{0:F0}s'}" HorizontalTextAlignment="Center" Style="{StaticResource StatValue}" FontSize="20" />
+                    <Label Grid.Row="2" Grid.Column="1" Text="Avg Duration" Style="{StaticResource Body}" VerticalOptions="Center" />
+                    <Label Grid.Row="2" Grid.Column="2" Text="{Binding Result.Contacts[1].AverageDuration, StringFormat='{0:F0}s'}" HorizontalTextAlignment="Center" Style="{StaticResource StatValue}" FontSize="20" />
+                </Grid>
+            </VerticalStackLayout>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HorizontalOptions="Center" />
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

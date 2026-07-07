@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Callyzer.App.ViewModels"
+    xmlns:controls="clr-namespace:Callyzer.App.Controls"
+    x:Class="Callyzer.App.Pages.ContactDetailPage"
+    x:DataType="vm:ContactDetailViewModel"
+    Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="16" Padding="16">
+
+            <!-- Contact Header -->
+            <VerticalStackLayout HorizontalOptions="Center" Spacing="8">
+                <controls:ContactAvatar ContactName="{Binding DisplayName}" Size="80" HorizontalOptions="Center" />
+                <Label Text="{Binding DisplayName}" Style="{StaticResource Title}"
+                       HorizontalTextAlignment="Center" />
+                <Label Text="{Binding PhoneNumber}" Style="{StaticResource Subtitle}"
+                       HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+
+            <!-- Stats Grid -->
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" RowSpacing="12" ColumnSpacing="12">
+                <controls:StatCard Grid.Row="0" Grid.Column="0" 
+                                   Title="Total Calls" 
+                                   TargetNumericValue="{Binding ContactAnalytics.TotalCalls}" />
+                                   
+                <controls:StatCard Grid.Row="0" Grid.Column="1" 
+                                   Title="Total Duration" 
+                                   Value="{Binding ContactAnalytics.TotalDuration, Converter={StaticResource DurationConverter}}" />
+                                   
+                <controls:StatCard Grid.Row="1" Grid.Column="0" 
+                                   Title="Incoming" 
+                                   TargetNumericValue="{Binding ContactAnalytics.IncomingCalls}"
+                                   ValueColor="{StaticResource IncomingColor}" />
+                                   
+                <controls:StatCard Grid.Row="1" Grid.Column="1" 
+                                   Title="Outgoing" 
+                                   TargetNumericValue="{Binding ContactAnalytics.OutgoingCalls}"
+                                   ValueColor="{StaticResource OutgoingColor}" />
+            </Grid>
+
+            <Button Text="Compare Contact" Style="{StaticResource PrimaryButton}" 
+                    Command="{Binding CompareCommand}"
+                    Margin="0,8" />
+
+            <!-- Additional Stats -->
+            <Frame Style="{StaticResource Card}">
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="12">
+                    <Label Grid.Row="0" Grid.Column="0" Text="Missed Calls" Style="{StaticResource Body}" />
+                    <Label Grid.Row="0" Grid.Column="1" Text="{Binding ContactAnalytics.MissedCalls}"
+                           Style="{StaticResource Body}" TextColor="{StaticResource MissedColor}" />
+
+                    <Label Grid.Row="1" Grid.Column="0" Text="Avg Duration" Style="{StaticResource Body}" />
+                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding ContactAnalytics.AverageDuration, StringFormat='{0:F0}s'}"
+                           Style="{StaticResource Body}" TextColor="{StaticResource PrimaryColor}" />
+
+                    <Label Grid.Row="2" Grid.Column="0" Text="Longest Call" Style="{StaticResource Body}" />
+                    <Label Grid.Row="2" Grid.Column="1" Text="{Binding ContactAnalytics.LongestCallDuration, Converter={StaticResource DurationConverter}}"
+                           Style="{StaticResource Body}" TextColor="{StaticResource PrimaryColor}" />
+
+                    <Label Grid.Row="3" Grid.Column="0" Text="Last Called" Style="{StaticResource Body}" />
+                    <Label Grid.Row="3" Grid.Column="1" Text="{Binding ContactAnalytics.LastCallDate, StringFormat='{0:MMM dd, yyyy}'}"
+                           Style="{StaticResource Body}" />
+                </Grid>
+            </Frame>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                               HorizontalOptions="Center" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

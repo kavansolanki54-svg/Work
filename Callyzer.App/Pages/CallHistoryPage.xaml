@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Callyzer.App.ViewModels"
+    x:Class="Callyzer.App.Pages.CallHistoryPage"
+    x:DataType="vm:CallHistoryViewModel"
+    Title="{Binding Title}">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- Search + Filter -->
+        <VerticalStackLayout Grid.Row="0" Padding="16,16,16,0" Spacing="8">
+            <SearchBar Placeholder="Search by name or number..."
+                       Text="{Binding SearchQuery}"
+                       SearchCommand="{Binding SearchCommand}" />
+
+            <ScrollView Orientation="Horizontal">
+                <HorizontalStackLayout Spacing="8">
+                    <Button Text="All" Style="{StaticResource SecondaryButton}"
+                            HeightRequest="36" FontSize="13" CornerRadius="18"
+                            Command="{Binding FilterByTypeCommand}" CommandParameter="All" />
+                    <Button Text="Incoming" Style="{StaticResource SecondaryButton}"
+                            HeightRequest="36" FontSize="13" CornerRadius="18"
+                            TextColor="{StaticResource IncomingColor}"
+                            Command="{Binding FilterByTypeCommand}" CommandParameter="Incoming" />
+                    <Button Text="Outgoing" Style="{StaticResource SecondaryButton}"
+                            HeightRequest="36" FontSize="13" CornerRadius="18"
+                            TextColor="{StaticResource OutgoingColor}"
+                            Command="{Binding FilterByTypeCommand}" CommandParameter="Outgoing" />
+                    <Button Text="Missed" Style="{StaticResource SecondaryButton}"
+                            HeightRequest="36" FontSize="13" CornerRadius="18"
+                            TextColor="{StaticResource MissedColor}"
+                            Command="{Binding FilterByTypeCommand}" CommandParameter="Missed" />
+                    <Button Text="Rejected" Style="{StaticResource SecondaryButton}"
+                            HeightRequest="36" FontSize="13" CornerRadius="18"
+                            TextColor="{StaticResource RejectedColor}"
+                            Command="{Binding FilterByTypeCommand}" CommandParameter="Rejected" />
+                </HorizontalStackLayout>
+            </ScrollView>
+
+            <Label Text="{Binding TotalCount, StringFormat='{0} total records'}"
+                   Style="{StaticResource Caption}" />
+        </VerticalStackLayout>
+
+        <!-- Call Log List -->
+        <CollectionView Grid.Row="1"
+                         ItemsSource="{Binding CallLogs}"
+                         RemainingItemsThreshold="5"
+                         RemainingItemsThresholdReachedCommand="{Binding LoadNextPageCommand}"
+                         Margin="16,8,16,0">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="x:Object">
+                    <Frame Style="{StaticResource Card}" Padding="12" Margin="0,4">
+                        <Grid ColumnDefinitions="40,*,Auto" ColumnSpacing="12">
+                            <!-- Call Type Icon -->
+                            <Frame Grid.Column="0"
+                                   BackgroundColor="{Binding CallType, Converter={StaticResource CallTypeColorConverter}}"
+                                   WidthRequest="40" HeightRequest="40" CornerRadius="20"
+                                   Padding="0" HasShadow="False" Opacity="0.2">
+                                <Label Text="📞" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                            </Frame>
+
+                            <!-- Name, Number, Time -->
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                <Label Text="{Binding ContactName}" Style="{StaticResource Body}" FontAttributes="Bold"
+                                       LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding PhoneNumber}" Style="{StaticResource Caption}" />
+                            </VerticalStackLayout>
+
+                            <!-- Duration & Time -->
+                            <VerticalStackLayout Grid.Column="2" VerticalOptions="Center" Spacing="2"
+                                                  HorizontalOptions="End">
+                                <Label Text="{Binding Duration, Converter={StaticResource DurationConverter}}"
+                                       Style="{StaticResource Caption}" HorizontalTextAlignment="End"
+                                       TextColor="{StaticResource PrimaryColor}" />
+                                <Label Text="{Binding CallDate, StringFormat='{0:hh:mm tt}'}"
+                                       Style="{StaticResource Caption}" HorizontalTextAlignment="End" />
+                            </VerticalStackLayout>
+                        </Grid>
+
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CallHistoryViewModel}}, Path=NavigateToContactDetailCommand}"
+                                                  CommandParameter="{Binding .}" />
+                        </Frame.GestureRecognizers>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+            <CollectionView.EmptyView>
+                <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="8" Padding="32">
+                    <Label Text="📱" FontSize="48" HorizontalTextAlignment="Center" />
+                    <Label Text="No calls found" Style="{StaticResource Subtitle}" HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+        </CollectionView>
+
+        <ActivityIndicator Grid.Row="1" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                           HorizontalOptions="Center" VerticalOptions="Start" Margin="0,16,0,0" />
+    </Grid>
+
+</ContentPage>

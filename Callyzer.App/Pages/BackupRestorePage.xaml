@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Callyzer.App.ViewModels"
+    xmlns:models="clr-namespace:Callyzer.App.Models"
+    x:Class="Callyzer.App.Pages.BackupRestorePage"
+    x:DataType="vm:BackupRestoreViewModel"
+    Title="{Binding Title}">
+
+    <Grid RowDefinitions="*,Auto">
+        
+        <!-- Backup List -->
+        <RefreshView Grid.Row="0" Command="{Binding LoadBackupsCommand}" IsRefreshing="{Binding IsBusy}">
+            <CollectionView ItemsSource="{Binding Backups}">
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="16" Margin="32">
+                        <Label Text="No backups found." Style="{StaticResource Title}" HorizontalTextAlignment="Center" />
+                        <Label Text="Create a new backup to secure your data." Style="{StaticResource Body}" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+                
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:BackupInfoModel">
+                        <Frame Style="{StaticResource Card}" Margin="16,8" Padding="12">
+                            <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8">
+                                <VerticalStackLayout Grid.Column="0" Spacing="4" VerticalOptions="Center">
+                                    <Label Text="{Binding DisplayName}" Style="{StaticResource Body}" FontAttributes="Bold" />
+                                    <Label Text="{Binding CreatedAt, StringFormat='{0:MMM dd, yyyy HH:mm}'}" Style="{StaticResource Caption}" />
+                                    <Label Text="{Binding FormattedSize}" Style="{StaticResource Caption}" TextColor="{StaticResource PrimaryColor}" />
+                                </VerticalStackLayout>
+                                
+                                <Button Grid.Column="1" Text="Restore" 
+                                        Style="{StaticResource SecondaryButton}" 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BackupRestoreViewModel}}, Path=RestoreCommand}"
+                                        CommandParameter="{Binding FilePath}" 
+                                        HeightRequest="40" Padding="8,0" />
+                                        
+                                <Button Grid.Column="2" Text="Share" 
+                                        Style="{StaticResource SecondaryButton}" 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BackupRestoreViewModel}}, Path=ShareCommand}"
+                                        CommandParameter="{Binding FilePath}" 
+                                        HeightRequest="40" Padding="8,0" />
+                                        
+                                <Button Grid.Column="3" Text="Del" 
+                                        BackgroundColor="{StaticResource OutgoingColor}" TextColor="White"
+                                        CornerRadius="8"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BackupRestoreViewModel}}, Path=DeleteCommand}"
+                                        CommandParameter="{Binding FilePath}" 
+                                        HeightRequest="40" Padding="8,0" />
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+        <!-- Floating Action Button Area (Create Backup) -->
+        <Frame Grid.Row="1" BackgroundColor="{StaticResource SurfaceColor}" Padding="16" HasShadow="True">
+            <Button Text="Create New Backup" 
+                    Style="{StaticResource PrimaryButton}" 
+                    Command="{Binding CreateBackupCommand}" />
+        </Frame>
+    </Grid>
+
+</ContentPage>

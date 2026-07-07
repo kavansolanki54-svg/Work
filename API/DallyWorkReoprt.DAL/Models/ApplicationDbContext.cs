@@ -52,9 +52,16 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<WorkLogTask> WorkLogTasks { get; set; }
     public virtual DbSet<PhoneCallLog> PhoneCallLogs { get; set; }
     public virtual DbSet<CallRecording> CallRecordings { get; set; }
+    public virtual DbSet<DeviceInformation> DeviceInformations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<PhoneCallLog>(entity =>
+        {
+            entity.HasIndex(e => new { e.EmployeeId, e.StartTime, e.ActiveStatus })
+                  .HasDatabaseName("IX_PhoneCallLogs_Analytics");
+        });
+
         modelBuilder.Entity<WorkReport>(entity =>
         {
             entity.Property(e => e.ActiveStatus).HasDefaultValue((byte)1);
